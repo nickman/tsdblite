@@ -15,11 +15,6 @@
  */
 package com.heliosapm.tsdblite.handlers;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -27,10 +22,16 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.compression.ZlibCodecFactory;
 import io.netty.handler.codec.compression.ZlibWrapper;
-import io.netty.handler.codec.http.HttpContentCompressor;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Title: ProtocolSwitch</p>
@@ -51,6 +52,10 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
     private static final StringEncoder PLAINTEXT_ENCODER = new StringEncoder();
     private static final WordSplitter PLAINTEXT_DECODER = new WordSplitter();
     private static final StringArrayTraceDecoder TRACE_DECODER = new StringArrayTraceDecoder();
+    /** The child channel logging handler */
+    private static final LoggingHandler loggingHandler = new LoggingHandler(ProtocolSwitch.class, LogLevel.INFO); 	 
+	
+
 	
 	/**
 	 * Creates a new ProtocolSwitch
@@ -105,10 +110,12 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
     }
 
     private void switchToHttp(ChannelHandlerContext ctx) {
-        ChannelPipeline p = ctx.pipeline();
-        p.addLast("decoder", new HttpRequestDecoder());
-        p.addLast("encoder", new HttpResponseEncoder());
-        p.addLast("deflater", new HttpContentCompressor());        
+        ChannelPipeline p = ctx.pipeline();     
+        
+        p.addLast("httpCodec", new HttpServerCodec());
+        p.addLast("httpAggr", new HttpObjectAggregator(65536));
+        p.addLast("logging", loggingHandler);
+        p.addLast("requestManager", HttpRequestManager.getInstance());        
         p.remove(this);
     }
     

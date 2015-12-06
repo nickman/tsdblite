@@ -15,7 +15,6 @@
  */
 package com.heliosapm.tsdblite.handlers;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 
@@ -40,8 +39,7 @@ public class SubmitTracesHandler extends HttpRequestHandler {
 	@Override
 	protected void process(final TSDBHttpRequest request) {
 		final Channel channel = request.getChannel();
-		final FullHttpRequest req = request.getRequest();
-		final ByteBuf buf = req.content();
+		final FullHttpRequest req = request.getRequest();		
 		final Trace[] traces = JSON.parseToObject(req.content(), Trace[].class);
 		for(Trace trace: traces) {
 			log.info("TRACE: {}", trace);

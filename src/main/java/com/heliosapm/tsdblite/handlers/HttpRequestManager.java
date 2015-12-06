@@ -15,6 +15,7 @@
  */
 package com.heliosapm.tsdblite.handlers;
 
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @author Whitehead (nwhitehead AT heliosdev DOT org)
  * <p><code>com.heliosapm.tsdblite.handlers.HttpRequestManager</code></p>
  */
-
+@Sharable
 public class HttpRequestManager extends SimpleChannelInboundHandler<FullHttpRequest> {
 	/** The singleton instance */
 	private static volatile HttpRequestManager instance = null;
@@ -74,7 +75,13 @@ public class HttpRequestManager extends SimpleChannelInboundHandler<FullHttpRequ
 	 */
 	@Override
 	protected void messageReceived(final ChannelHandlerContext ctx, final FullHttpRequest msg) throws Exception {
-		final TSDBHttpRequest r = new TSDBHttpRequest(msg, ctx.channel());
+		try {
+			final TSDBHttpRequest r = new TSDBHttpRequest(msg, ctx.channel());
+			final HttpRequestHandler handler = requestHandlers.get(r.getRoute());
+			handler.process(r);
+		} catch (Exception ex) {
+			log.error("HttpRequest Routing Error", ex);
+		}
 	}
 	
 

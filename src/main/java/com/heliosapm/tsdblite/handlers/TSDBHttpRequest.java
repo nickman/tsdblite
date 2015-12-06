@@ -18,6 +18,9 @@ package com.heliosapm.tsdblite.handlers;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.QueryStringDecoder;
+
+import java.util.regex.Pattern;
 
 /**
  * <p>Title: TSDBHttpRequest</p>
@@ -32,6 +35,13 @@ public class TSDBHttpRequest {
 	protected final FullHttpRequest request;
 	/** The channel the request came in on */
 	protected final Channel channel;
+	/** The request path */
+	protected final String path; 
+	/** The routing key */
+	protected final String route;
+	
+	/** The path splitter regex */
+	public static final Pattern PATH_SPLIT = Pattern.compile("/|\\?");
 	
 	/**
 	 * Creates a new TSDBHttpRequest
@@ -41,6 +51,10 @@ public class TSDBHttpRequest {
 	protected TSDBHttpRequest(final FullHttpRequest request, final Channel channel) {
 		this.request = request;
 		this.channel = channel;
+		final QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
+		path = decoder.path();
+		route = "/" + PATH_SPLIT.split(path)[1];
+		
 	}
 
 	/**
@@ -57,6 +71,22 @@ public class TSDBHttpRequest {
 	 */
 	public Channel getChannel() {
 		return channel;
+	}
+
+	/**
+	 * Returns 
+	 * @return the path
+	 */
+	public String getPath() {
+		return path;
+	}
+
+	/**
+	 * Returns 
+	 * @return the route
+	 */
+	public String getRoute() {
+		return route;
 	}
 	
 	
