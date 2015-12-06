@@ -17,21 +17,13 @@ package com.heliosapm.tsdblite.metric;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-
-import javax.management.ObjectName;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -42,13 +34,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.common.hash.Funnel;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-import com.google.common.hash.PrimitiveSink;
 import com.heliosapm.tsdblite.Constants;
 import com.heliosapm.tsdblite.json.JSON;
-import com.heliosapm.utils.jmx.JMXHelper;
+import com.heliosapm.tsdblite.metric.MetricCache.Metric;
 
 /**
  * <p>Title: Trace</p>
@@ -59,10 +47,8 @@ import com.heliosapm.utils.jmx.JMXHelper;
  */
 
 public class Trace implements Comparable<Trace>{
-	/** The metric name */
-	protected final String metricName;
-	/** The metric tags */
-	protected final TreeMap<String, String> tags;
+	/** The metric  */
+	protected final Metric metric;
 	/** The value type indicator */
 	protected final boolean doubleType;
 	/** The long value */
@@ -71,13 +57,6 @@ public class Trace implements Comparable<Trace>{
 	protected final double doubleValue;
 	/** The metric timestamp in ms. */
 	protected final long timestampMs;
-	/** The tag key stack, only used here to support tracer checkpoints */
-	private transient final LinkedList<String> tagKeyStack = new LinkedList<String>();
-	
-	/** The lazilly created alarm ObjectName */
-	private transient volatile ObjectName alarmObjectName = null;
-	/** The lazilly created metric name long hash code */
-	private transient volatile Long longHashCode = null;
 	
 
 	/** I reckon any value higher than this number means ms. Anything lower is ms. */
@@ -89,29 +68,6 @@ public class Trace implements Comparable<Trace>{
 	
 	/** The UTF8 character set */
 	public static final Charset UTF8 = Charset.forName("UTF8");
-	/** The hashing function to compute hashes for metric names */
-	public static final HashFunction METRIC_NAME_HASHER = Hashing.murmur3_128();
-	
-	
-	/**
-	 * <p>Title: MetricNameFunnel</p>
-	 * <p>Description: A hashing funnel to generate a [hopefully] unique long hash code for each metric</p> 
-	 * <p>Company: Helios Development Group LLC</p>
-	 * @author Whitehead (nwhitehead AT heliosdev DOT org)
-	 * <p><code>org.helios.nash.tracing.MetricNameFunnel</code></p>
-	 */
-	public static enum MetricNameFunnel implements Funnel<Trace> {
-    /** The funnel instance */
-    INSTANCE;
-    @Override
-		public void funnel(final Trace trace, final PrimitiveSink into) {
-    	into.putString(trace.metricName, UTF8);
-    	for(Map.Entry<String, String> entry: trace.tags.entrySet()) {
-    		into.putString(entry.getKey(), UTF8)
-    		.putString(entry.getValue(), UTF8);
-    	}
-    }
-  }
 	
 	/**
 	 * {@inheritDoc}
@@ -137,15 +93,34 @@ public class Trace implements Comparable<Trace>{
 	 * @param timestampMs The timestamp in ms.
 	 */
 	private Trace(final String metricName, final Map<String, String> tags, final boolean doubleType, final long longValue, final double doubleValue, final long timestampMs) {
-		this.metricName = metricName;
-		this.tags = new TreeMap<String, String>(TagKeySorter.INSTANCE);
-		this.tags.putAll(tags);
+		this.metric = MetricCache.getInstance().getMetric(metricName, tags);
 		this.doubleType = doubleType;
 		this.longValue = longValue;
 		this.doubleValue = doubleValue;
 		this.timestampMs = toMs(timestampMs);
 	}
 	
+	/**
+	 * Creates a new Trace
+	 * @param metric The metric
+	 * @param doubleType true for a double type value, false for a long type double
+	 * @param longValue The long value
+	 * @param doubleValue The double value
+	 * @param timestampMs The timestamp in ms.
+	 */
+	public Trace(final Metric metric, final boolean doubleType, final long longValue, final double doubleValue, final long timestampMs) {
+		this.metric = metric;
+		this.doubleType = doubleType;
+		this.longValue = longValue;
+		this.doubleValue = doubleValue;
+		this.timestampMs = toMs(timestampMs);
+	}
+	
+	/**
+	 * Returns the passed long timestamp as millis, converting if necessary if the value seems like it might be in seconds.
+	 * @param value The timestamp
+	 * @return the timestamp in ms.
+	 */
 	public static long toMs(final long value) {
 		return value <= MAX_SECS_TIME ? TimeUnit.MILLISECONDS.convert(value, TimeUnit.SECONDS) : value;
 	}
@@ -172,6 +147,7 @@ public class Trace implements Comparable<Trace>{
 		this(metricName, tags, true, -1L, doubleValue, timestampMs);
 	}
 	
+	@SuppressWarnings("javadoc")
 	public static void main(String[] args) {
 		log("Trace Test");
 		Map<String, String> tags = new HashMap<String, String>(4);
@@ -205,6 +181,7 @@ public class Trace implements Comparable<Trace>{
 		}
 	}
 	
+	@SuppressWarnings("javadoc")
 	public static void log(Object msg) {
 		System.out.println(msg);
 	}
@@ -226,41 +203,22 @@ public class Trace implements Comparable<Trace>{
 //		tagKeyStack.addAll(tracer.getTagKeyStack());
 //	}
 	
-	private String tagsToStr() {
-		final StringBuilder b = new StringBuilder();
-		for(Map.Entry<String, String> entry: tags.entrySet()) {
-			b.append(" ").append(entry.getKey()).append("=").append(entry.getValue());
-		}
-		return b.toString();
-	}
 
-	
-	
-	/**
-	 * Returns the current tag key stack
-	 * @return the tagKeyStack
-	 */
-	LinkedList<String> getTagKeyStack() {
-		return tagKeyStack;
-	}
-
-	
-	
 
 	/**
 	 * Returns the metric name
 	 * @return the metricName
 	 */
 	public String getMetricName() {
-		return metricName;
+		return metric.getMetricName();
 	}
 
 	/**
 	 * Returns the metric tags
 	 * @return the tags
 	 */
-	public SortedMap<String, String> getTags() {
-		return Collections.unmodifiableSortedMap(tags);
+	public Map<String, String> getTags() {
+		return metric.getTags();
 	}
 
 	/**
@@ -303,8 +261,8 @@ public class Trace implements Comparable<Trace>{
 	@Override
 	public String toString() {
 		final StringBuilder b = new StringBuilder("Trace: [");
-		b.append(metricName).append(":").append("{");
-		for(Map.Entry<String, String> entry: tags.entrySet()) {
+		b.append(metric.getMetricName()).append(":").append("{");
+		for(Map.Entry<String, String> entry: metric.getTags().entrySet()) {
 			b.append(entry.getKey()).append("=").append(entry.getValue()).append(",");
 		}
 		b.deleteCharAt(b.length()-1).append("}")
@@ -312,12 +270,6 @@ public class Trace implements Comparable<Trace>{
 		.append(" value:");
 		if(doubleType) b.append(doubleValue);
 		else b.append(longValue);
-		if(alarmObjectName!=null) {
-			b.append(" on:").append(alarmObjectName);
-		}		
-		if(longHashCode!=null) {
-			b.append(" hash:").append(longHashCode);
-		}
 		return b.append("]").toString();
 	}
 	
@@ -326,10 +278,7 @@ public class Trace implements Comparable<Trace>{
 	 * @return the long hash code
 	 */
 	public long getHashCode() {
-		if(longHashCode==null) {
-			longHashCode = METRIC_NAME_HASHER.hashObject(this, MetricNameFunnel.INSTANCE).padToLong();
-		}
-		return longHashCode;
+		return metric.getHashCode();
 	}
 
 	
@@ -345,6 +294,10 @@ public class Trace implements Comparable<Trace>{
 	 */
 	public static class TraceArraySerializer extends JsonSerializer<Trace[]> {
 		private static final TraceSerializer TS = new TraceSerializer();
+		/**
+		 * {@inheritDoc}
+		 * @see com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider)
+		 */
 		@Override
 		public void serialize(final Trace[] traces, final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonProcessingException {
 			try {
@@ -380,7 +333,7 @@ public class Trace implements Comparable<Trace>{
 		public void serialize(final Trace trace, final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonProcessingException {
 			jgen.writeStartObject();
 			jgen.writeFieldName("metric");			
-			jgen.writeString(trace.metricName);
+			jgen.writeString(trace.getMetricName());
 			
 			jgen.writeFieldName("timestamp");			
 			jgen.writeNumber(trace.timestampMs);
@@ -388,7 +341,7 @@ public class Trace implements Comparable<Trace>{
 			jgen.writeFieldName("value");			
 			jgen.writeNumber(trace.doubleType ? trace.doubleValue : trace.longValue);
 			jgen.writeObjectFieldStart("tags");
-			for(Map.Entry<String, String> entry: trace.tags.entrySet()) {
+			for(Map.Entry<String, String> entry: trace.getTags().entrySet()) {
 				jgen.writeFieldName(entry.getKey());
 				jgen.writeString(entry.getValue());
 			}
@@ -413,24 +366,26 @@ public class Trace implements Comparable<Trace>{
 		@Override
 		public Trace deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			final JsonNode node = p.getCodec().readTree(p);			
+			final Metric metric = MetricCache.getInstance().getMetric(node);			
 			final Number v = node.get("value").numberValue();
 			final boolean isDouble = (v instanceof Double);
-			return new Trace(node.get("metric").textValue(), fromObjectNode(node.get("tags")), isDouble, v.longValue(), v.doubleValue(), node.get("timestamp").longValue());
-		}
-		
-		public static Map<String, String> fromObjectNode(final JsonNode on) {
-			final Map<String, String> map = new HashMap<String, String>(on.size());
-			
-			for(Iterator<Entry<String, JsonNode>> iter = on.fields(); iter.hasNext();) {
-				final Entry<String, JsonNode> entry = iter.next();
-				map.put(entry.getKey(), entry.getValue().textValue());
-			}
-			return map;
+			return new Trace(metric, isDouble, v.longValue(), v.doubleValue(), node.get("timestamp").longValue());
 		}
 	}
 	
+	/**
+	 * <p>Title: TraceArrayDeserializer</p>
+	 * <p>Description: Jackson JSON deserializer for Trace array instances</p> 
+	 * <p>Company: Helios Development Group LLC</p>
+	 * @author Whitehead (nwhitehead AT heliosdev DOT org)
+	 * <p><code>com.heliosapm.tsdblite.metric.TraceArrayDeserializer</code></p>
+	 */
 	public static class TraceArrayDeserializer extends JsonDeserializer<Trace[]> {
-		private static final TraceDeserializer td = new TraceDeserializer();
+		/**
+		 * {@inheritDoc}
+		 * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext)
+		 */
+		@Override
 		public Trace[] deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			final ArrayNode node = p.getCodec().readTree(p);
 			final int size = node.size();

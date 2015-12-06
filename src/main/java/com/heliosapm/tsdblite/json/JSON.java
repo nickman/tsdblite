@@ -15,6 +15,9 @@
  */
 package com.heliosapm.tsdblite.json;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -152,6 +155,37 @@ public class JSON {
 			throw new JSONException(e);
 		}
 	}
+	
+	/**
+	 * Deserializes a JSON formatted byte array to a specific class type
+	 * <b>Note:</b> If you get mapping exceptions you may need to provide a 
+	 * TypeReference
+	 * @param json The buffer to deserialize from
+	 * @param pojo The class type of the object used for deserialization
+	 * @return An object of the {@code pojo} type
+	 * @throws IllegalArgumentException if the data or class was null or parsing 
+	 * failed
+	 * @throws JSONException if the data could not be parsed
+	 */
+	public static final <T> T parseToObject(final ByteBuf json, final Class<T> pojo) {
+		if (json == null)
+			throw new IllegalArgumentException("Incoming buffer was null");
+		if (pojo == null)
+			throw new IllegalArgumentException("Missing class type");
+		InputStream is = new ByteBufInputStream(json);
+		try {
+			return jsonMapper.readValue(is, pojo);
+		} catch (JsonParseException e) {
+			throw new IllegalArgumentException(e);
+		} catch (JsonMappingException e) {
+			throw new IllegalArgumentException(e);
+		} catch (IOException e) {
+			throw new JSONException(e);
+		} finally {
+			if(is!=null) try { is.close(); } catch (Exception x) {/* No Op */}
+		}
+	}
+	
 	
 	/**
 	 * Deserializes a JSON node to a specific class type
