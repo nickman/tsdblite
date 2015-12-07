@@ -15,12 +15,13 @@
  */
 package com.heliosapm.tsdblite.handlers;
 
-import java.nio.charset.Charset;
-import java.util.List;
-
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
+
+import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * <p>Title: WordSplitter</p>
@@ -30,7 +31,7 @@ import io.netty.handler.codec.MessageToMessageDecoder;
  * @author Whitehead (nwhitehead AT heliosdev DOT org)
  * <p><code>com.heliosapm.tsdblite.handlers.WordSplitter</code></p>
  */
-
+@Sharable
 public class WordSplitter extends MessageToMessageDecoder<ByteBuf> {
 	
 	private static final Charset CHARSET = Charset.forName("ISO-8859-1");

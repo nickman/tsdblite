@@ -15,18 +15,6 @@
  */
 package com.heliosapm.tsdblite;
 
-import java.nio.channels.spi.SelectorProvider;
-
-import javax.management.ObjectName;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.heliosapm.tsdblite.handlers.ProtocolSwitch;
-import com.heliosapm.tsdblite.jmx.ForkJoinPoolManager;
-import com.heliosapm.utils.config.ConfigurationHelper;
-import com.heliosapm.utils.jmx.JMXHelper;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
@@ -39,7 +27,21 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultEventExecutor;
 import io.netty.util.concurrent.DefaultExecutorServiceFactory;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.internal.chmv8.ForkJoinPool;
+
+import java.nio.channels.spi.SelectorProvider;
+
+import javax.management.ObjectName;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.heliosapm.tsdblite.handlers.ProtocolSwitch;
+import com.heliosapm.tsdblite.jmx.ForkJoinPoolManager;
+import com.heliosapm.utils.config.ConfigurationHelper;
+import com.heliosapm.utils.jmx.JMXHelper;
 
 /**
  * <p>Title: Server</p>
@@ -136,6 +138,7 @@ public class Server extends ChannelInitializer<SocketChannel> {
 		bootStrap = new ServerBootstrap();
 		groupExecutor = new DefaultEventExecutor(channelGroupPool);
 		channelGroup = new DefaultChannelGroup("TSDBLite", groupExecutor);
+		
 		log.info("Selector: {}", selectorProvider.getClass().getName());
 		bootStrap.group(bossGroup, workerGroup)
 			.channel(NioServerSocketChannel.class)
@@ -172,8 +175,13 @@ public class Server extends ChannelInitializer<SocketChannel> {
 	 * @see io.netty.channel.ChannelInitializer#initChannel(io.netty.channel.Channel)
 	 */
 	@Override
-	protected void initChannel(final SocketChannel ch) throws Exception {
+	protected void initChannel(final SocketChannel ch) throws Exception {		
 		channelGroup.add(ch);
+		ch.closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
+			public void operationComplete(Future<? super Void> future) throws Exception {
+				log.info("\n\t==============================\n\tChannel Closed [{}]\n\t==============================", ch.id());
+			};
+		});
 		ch.pipeline().addLast("ProtocolSwitch", new ProtocolSwitch());
 	}
 

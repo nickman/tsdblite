@@ -53,7 +53,13 @@ public class TSDBHttpRequest {
 		this.channel = channel;
 		final QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
 		path = decoder.path();
-		route = "/" + PATH_SPLIT.split(path)[1];
+		final StringBuilder b = new StringBuilder();
+		final String[] parts = PATH_SPLIT.split(path);
+		for(String part: parts) {
+			if(part==null || part.trim().isEmpty()) continue;
+			b.append("/").append(part);
+		}
+		route = b.toString();
 		
 	}
 

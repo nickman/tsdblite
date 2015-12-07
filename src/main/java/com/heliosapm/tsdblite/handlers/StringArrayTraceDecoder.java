@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.heliosapm.tsdblite.metric.Trace;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.MessageToMessageDecoder;
 
 /**
@@ -33,7 +34,7 @@ import io.netty.handler.codec.MessageToMessageDecoder;
  * @author Whitehead (nwhitehead AT heliosdev DOT org)
  * <p><code>com.heliosapm.tsdblite.handlers.StringArrayTraceDecoder</code></p>
  */
-
+@Sharable
 public class StringArrayTraceDecoder extends MessageToMessageDecoder<String[]> {
 	/** Instance logger */
 	protected final Logger log = LoggerFactory.getLogger(getClass());

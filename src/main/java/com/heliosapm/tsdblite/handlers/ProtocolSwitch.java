@@ -22,7 +22,10 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.compression.ZlibCodecFactory;
 import io.netty.handler.codec.compression.ZlibWrapper;
+import io.netty.handler.codec.http.HttpContentCompressor;
+import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
@@ -85,7 +88,7 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
 		}
         final int magic1 = in.getUnsignedByte(in.readerIndex());
         final int magic2 = in.getUnsignedByte(in.readerIndex() + 1);
-        if (isGzip(magic1, magic2)) {
+        if (detectGzip && isGzip(magic1, magic2)) {
             enableGzip(ctx);
             log.info("Enabled GZIp on channel [{}]", ctx.channel().id().asShortText());
         } else if (isHttp(magic1, magic2)) {
@@ -107,14 +110,23 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
         p.addLast("gzipinflater", ZlibCodecFactory.newZlibDecoder(ZlibWrapper.GZIP));
         p.addLast("2ndPhaseSwitch", new ProtocolSwitch(false));
         p.remove(this);
+        log.info("enabled gzip: [{}]", ctx.channel().id());
     }
 
     private void switchToHttp(ChannelHandlerContext ctx) {
         ChannelPipeline p = ctx.pipeline();     
         
+        
+        
+        
         p.addLast("httpCodec", new HttpServerCodec());
+        
+        p.addLast("inflater", new HttpContentDecompressor());
+        p.addLast("encoder", new HttpResponseEncoder());
+        p.addLast("deflater", new HttpContentCompressor());
+        
         p.addLast("httpAggr", new HttpObjectAggregator(65536));
-        p.addLast("logging", loggingHandler);
+//        p.addLast("logging", loggingHandler);
         p.addLast("requestManager", HttpRequestManager.getInstance());        
         p.remove(this);
     }
@@ -128,6 +140,7 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
         p.addLast("decoder", PLAINTEXT_DECODER);
         p.addLast("traceDecoder", TRACE_DECODER);        
         p.remove(this);    	
+        log.info("switched to plain text: [{}]", ctx.channel().id());
     }
 	
 	

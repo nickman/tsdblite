@@ -137,6 +137,14 @@ public class Trace implements Comparable<Trace>{
 	}
 	
 	/**
+	 * Returns the trace value
+	 * @return the trace value
+	 */
+	public Number getValue() {
+		return doubleType ? doubleValue : longValue;
+	}
+	
+	/**
 	 * Creates a new double value Trace
 	 * @param metricName The metric name (concated meric name segments)
 	 * @param tags The metric tags

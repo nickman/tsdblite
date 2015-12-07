@@ -66,7 +66,7 @@ public class HttpRequestManager extends SimpleChannelInboundHandler<FullHttpRequ
 	 * Creates a new HttpRequestManager
 	 */
 	private HttpRequestManager() {
-		requestHandlers.put("/put", new SubmitTracesHandler());
+		requestHandlers.put("/api/put", new SubmitTracesHandler());
 	}
 	
 	/**

@@ -20,7 +20,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
+
+import javax.management.ObjectName;
 
 import org.cliffc.high_scale_lib.NonBlockingHashMapLong;
 import org.slf4j.Logger;
@@ -31,6 +34,7 @@ import com.google.common.hash.Funnel;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.PrimitiveSink;
+import com.heliosapm.utils.jmx.JMXHelper;
 import com.heliosapm.utils.tuples.NVP;
 
 /**
@@ -58,7 +62,7 @@ public class MetricCache {
 	/** Placeholder metric */
 	public final Metric PLACEHOLDER = new Metric();
 	/** An empty tag map const */
-	public static final Map<String, String> EMPTY_TAG_MAP = Collections.unmodifiableMap(new HashMap<String, String>(0));
+	public static final SortedMap<String, String> EMPTY_TAG_MAP = Collections.unmodifiableSortedMap(new TreeMap<String, String>());
 	
 
 	
@@ -195,6 +199,33 @@ public class MetricCache {
 		
 	}
 	
+	/**
+	 * <p>Title: MetricMBean</p>
+	 * <p>Description: JMX MBean interface for Metric instances</p> 
+	 * <p>Company: Helios Development Group LLC</p>
+	 * @author Whitehead (nwhitehead AT heliosdev DOT org)
+	 * <p><code>com.heliosapm.tsdblite.metric.MetricCache.MetricMBean</code></p>
+	 */
+	public interface MetricMBean {
+		/**
+		 * Returns the metric name
+		 * @return the metric name
+		 */
+		public String getMetricName();
+		
+		/**
+		 * Returns the metric tags
+		 * @return the metric tags
+		 */
+		public SortedMap<String, String> getTags();
+		
+		/**
+		 * Returns the metric hash 
+		 * @return the metric hash
+		 */
+		public long getHashCode();
+		
+	}
 	
 	/**
 	 * <p>Title: Metric</p>
@@ -203,11 +234,11 @@ public class MetricCache {
 	 * @author Whitehead (nwhitehead AT heliosdev DOT org)
 	 * <p><code>com.heliosapm.tsdblite.metric.MetricCache.Metric</code></p>
 	 */
-	public class Metric {
+	public class Metric implements MetricMBean {
 		/** The metric name */
 		protected final String metricName;
 		/** The metric tags */
-		protected final Map<String, String> tags;
+		protected final SortedMap<String, String> tags;
 		/** The long hash code for this metric */
 		protected final long hashCode;
 		
@@ -229,7 +260,7 @@ public class MetricCache {
 			if(metricName==null || metricName.trim().isEmpty()) throw new IllegalArgumentException("The passed metric name was null or empty");
 			this.metricName = metricName.trim();
 			if(tags==null || tags.isEmpty()) {
-				this.tags = Collections.emptyMap();
+				this.tags = EMPTY_TAG_MAP;
 			} else {
 				final TreeMap<String, String> tmp = new TreeMap<String, String>(TagKeySorter.INSTANCE);
 				for(Map.Entry<String, String> entry: tags.entrySet()) {
@@ -290,6 +321,14 @@ public class MetricCache {
 			return b.toString();
 		}
 		
+		/**
+		 * Generates a JMX ObjectName for this metric
+		 * @return a JMX ObjectName
+		 */
+		public ObjectName toObjectName() {
+			return JMXHelper.objectName(metricName, tags);
+		}
+		
 		
 		/**
 		 * Returns the metric name
@@ -303,7 +342,7 @@ public class MetricCache {
 		 * Returns the metric tags
 		 * @return the metric tags
 		 */
-		public Map<String, String> getTags() {
+		public SortedMap<String, String> getTags() {
 			return tags;
 		}
 		

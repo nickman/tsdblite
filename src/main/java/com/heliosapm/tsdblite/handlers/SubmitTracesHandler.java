@@ -16,7 +16,10 @@
 package com.heliosapm.tsdblite.handlers;
 
 import io.netty.channel.Channel;
+import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
 
 import com.heliosapm.tsdblite.json.JSON;
 import com.heliosapm.tsdblite.metric.Trace;
@@ -38,12 +41,15 @@ public class SubmitTracesHandler extends HttpRequestHandler {
 	 */
 	@Override
 	protected void process(final TSDBHttpRequest request) {
+		log.info("Processing [{}]", request.getRequest());
 		final Channel channel = request.getChannel();
 		final FullHttpRequest req = request.getRequest();		
 		final Trace[] traces = JSON.parseToObject(req.content(), Trace[].class);
 		for(Trace trace: traces) {
 			log.info("TRACE: {}", trace);
 		}
+		request.getChannel().write(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT));
+		
 	}
 
 	
