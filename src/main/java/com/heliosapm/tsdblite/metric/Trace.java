@@ -16,6 +16,8 @@
 package com.heliosapm.tsdblite.metric;
 
 import java.io.IOException;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,13 +42,13 @@ import com.heliosapm.tsdblite.metric.MetricCache.Metric;
 
 /**
  * <p>Title: Trace</p>
- * <p>Description: </p> 
+ * <p>Description: Represents a collected data instance comprised of a value, a timestamp and a metric</p> 
  * <p>Company: Helios Development Group LLC</p>
  * @author Whitehead (nwhitehead AT heliosdev DOT org)
  * <p><code>com.heliosapm.tsdblite.metric.Trace</code></p>
  */
 
-public class Trace implements Comparable<Trace>{
+public class Trace implements Comparable<Trace>, Serializable {
 	/** The metric  */
 	protected final Metric metric;
 	/** The value type indicator */
@@ -114,6 +116,13 @@ public class Trace implements Comparable<Trace>{
 		this.longValue = longValue;
 		this.doubleValue = doubleValue;
 		this.timestampMs = toMs(timestampMs);
+	}
+	
+	/**
+	 * @throws ObjectStreamException  
+	 */
+	Object writeReplace() throws ObjectStreamException {
+		return JSON.serializeToString(this);
 	}
 	
 	/**

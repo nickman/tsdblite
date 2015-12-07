@@ -17,12 +17,13 @@ package com.heliosapm.tsdblite.metric;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
 import org.cliffc.high_scale_lib.NonBlockingHashMapLong;
@@ -34,6 +35,10 @@ import com.google.common.hash.Funnel;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.PrimitiveSink;
+import com.heliosapm.tsdblite.Constants;
+import com.heliosapm.tsdblite.jmx.Util;
+import com.heliosapm.tsdblite.metric.AppMetric.SubNotif;
+import com.heliosapm.utils.config.ConfigurationHelper;
 import com.heliosapm.utils.jmx.JMXHelper;
 import com.heliosapm.utils.tuples.NVP;
 
@@ -53,7 +58,9 @@ public class MetricCache {
 	/** Instance logger */
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 	/** The metric cache, keyed by the long hash code */
-	protected final NonBlockingHashMapLong<Metric> metricCache = new NonBlockingHashMapLong<Metric>(8096, false);
+	protected final NonBlockingHashMapLong<AppMetric> metricCache = new NonBlockingHashMapLong<AppMetric>(8096, false);
+	/** The metrics MBeanServer */
+	protected final MBeanServer metricMBeanServer;
 	/** The UTF8 character set */
 	public static final Charset UTF8 = Charset.forName("UTF8");
 	/** The hashing function to compute hashes for metric names */
@@ -172,12 +179,21 @@ public class MetricCache {
 	 */
 	public Metric getMetric(final String metricName, final Map<String, String> tags) {
 		final long hashCode = hashCode(metricName, tags);
-		Metric metric = metricCache.putIfAbsent(hashCode, PLACEHOLDER);
-		if(metric==null || metric==PLACEHOLDER) {			
-			metric = new Metric(metricName, tags, hashCode);
-			metricCache.replace(hashCode, metric);
+		AppMetric appMetric = metricCache.putIfAbsent(hashCode, AppMetric.PLACEHOLDER);
+		if(appMetric==null || appMetric==AppMetric.PLACEHOLDER) {			
+			appMetric = new AppMetric(new Metric(metricName, tags, hashCode));
+			metricCache.replace(hashCode, appMetric);			
+			JMXHelper.registerMBean(metricMBeanServer, appMetric.getMetricInstance().toObjectName(), appMetric);
 		}
-		return metric;		
+		return appMetric.getMetricInstance();		
+	}
+	
+	/**
+	 * Returns the metric MBeanServer
+	 * @return the metric MBeanServer
+	 */
+	public MBeanServer getMetricServer() {
+		return metricMBeanServer;
 	}
 
 	/**
@@ -187,17 +203,54 @@ public class MetricCache {
 	 */
 	public Metric getMetric(final JsonNode node) {
 		final long hashCode = hashCode(node);
-		Metric metric = metricCache.putIfAbsent(hashCode, PLACEHOLDER);
-		if(metric==null || metric==PLACEHOLDER) {			
-			metric = new Metric(node, hashCode);
-			metricCache.replace(hashCode, metric);
+		AppMetric appMetric = metricCache.putIfAbsent(hashCode, AppMetric.PLACEHOLDER);
+		if(appMetric==null || appMetric==AppMetric.PLACEHOLDER) {			
+			appMetric = new AppMetric(new Metric(node, hashCode));
+			metricCache.replace(hashCode, appMetric);			
+			JMXHelper.registerMBean(metricMBeanServer, appMetric.getMetricInstance().toObjectName(), appMetric);
 		}
-		return metric;
+		return appMetric.getMetricInstance();		
 	}
 	
 	private MetricCache() {
-		
+		metricMBeanServer = MBeanServerFactory.createMBeanServer("tsdblite");
+		final int port = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_METRICS_JMXMP_PORT, Constants.DEFAULT_METRICS_JMXMP_PORT);
+		final String iface = ConfigurationHelper.getSystemThenEnvProperty(Constants.CONF_METRICS_JMXMP_IFACE, Constants.DEFAULT_METRICS_JMXMP_IFACE);
+		JMXHelper.fireUpJMXMPServer(iface, port, metricMBeanServer);
+		JMXHelper.remapMBeans(JMXHelper.objectName("java.lang:*"), JMXHelper.getHeliosMBeanServer(), metricMBeanServer); 
+		JMXHelper.remapMBeans(JMXHelper.objectName("java.nio:*"), JMXHelper.getHeliosMBeanServer(), metricMBeanServer);
 	}
+	
+	/**
+	 * Submits a trace instance
+	 * @param trace a trace instance
+	 */
+	public void submit(final Trace trace) {
+		final AppMetric appMetric = metricCache.get(trace.getHashCode());
+		appMetric.submit(trace);
+	}
+	
+	/**
+	 * Returns the AppMetric for the passed ObjectName
+	 * @param on The metric name as an ObjectName
+	 * @return the AppMetric or null if it was not found
+	 */
+	public AppMetric getAppMetric(final ObjectName on) {
+		if(on==null) throw new IllegalArgumentException("The passed ObjectName was null");		
+		return metricCache.get(Util.hashCode(on));
+	}
+	
+	/**
+	 * Returns a SubNotif for the passed metric name
+	 * @param on the metric name as an ObjectName
+	 * @return the SubNotif or null if the AppMetric was not found
+	 */
+	public SubNotif getSubNotif(final ObjectName on) {
+		final AppMetric am = getAppMetric(on);
+		if(am!=null) return am.getSubNotif();
+		return null;
+	}
+	
 	
 	/**
 	 * <p>Title: MetricMBean</p>
@@ -218,6 +271,13 @@ public class MetricCache {
 		 * @return the metric tags
 		 */
 		public SortedMap<String, String> getTags();
+		
+		/**
+		 * Returns the metric tags
+		 * @return the metric tags
+		 */
+		public String getTagStr();
+		
 		
 		/**
 		 * Returns the metric hash 
@@ -316,19 +376,20 @@ public class MetricCache {
 		public String tagsToStr() {
 			final StringBuilder b = new StringBuilder();
 			for(Map.Entry<String, String> entry: tags.entrySet()) {
-				b.append(" ").append(entry.getKey()).append("=").append(entry.getValue());
+				b.append(entry.getKey()).append("=").append(entry.getValue()).append(",");
 			}
-			return b.toString();
+			return b.deleteCharAt(b.length()-1).toString();
 		}
 		
 		/**
 		 * Generates a JMX ObjectName for this metric
 		 * @return a JMX ObjectName
 		 */
-		public ObjectName toObjectName() {
-			return JMXHelper.objectName(metricName, tags);
+		public ObjectName toObjectName() {			
+			return JMXHelper.objectName(new StringBuilder(metricName)
+				.append(":").append(tagsToStr())
+			);
 		}
-		
 		
 		/**
 		 * Returns the metric name
@@ -344,6 +405,10 @@ public class MetricCache {
 		 */
 		public SortedMap<String, String> getTags() {
 			return tags;
+		}
+		
+		public String getTagStr() {
+			return tagsToStr();
 		}
 		
 		/**

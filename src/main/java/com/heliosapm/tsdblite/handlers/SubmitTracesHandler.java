@@ -22,6 +22,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 
 import com.heliosapm.tsdblite.json.JSON;
+import com.heliosapm.tsdblite.metric.MetricCache;
 import com.heliosapm.tsdblite.metric.Trace;
 
 
@@ -34,6 +35,17 @@ import com.heliosapm.tsdblite.metric.Trace;
  */
 
 public class SubmitTracesHandler extends HttpRequestHandler {
+	
+	/** The endpoint where metrics are submitted to */
+	final MetricCache metricCache;
+
+	/**
+	 * Creates a new SubmitTracesHandler
+	 */
+	public SubmitTracesHandler() {
+		super();
+		metricCache = MetricCache.getInstance();
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -47,6 +59,7 @@ public class SubmitTracesHandler extends HttpRequestHandler {
 		final Trace[] traces = JSON.parseToObject(req.content(), Trace[].class);
 		for(Trace trace: traces) {
 			log.info("TRACE: {}", trace);
+			
 		}
 		request.getChannel().write(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT));
 		

@@ -35,7 +35,7 @@ public abstract class Constants {
 	/** The conf property name for the main netty listening port */
 	public static final String CONF_NETTY_PORT = "netty.port";
 	/** The default main netty listening port */
-	public static final int DEFAULT_NETTY_PORT = 2936;
+	public static final int DEFAULT_NETTY_PORT = 4242;
 
 	/** The conf property name for the main netty bind interface */
 	public static final String CONF_NETTY_IFACE = "netty.iface";
@@ -45,12 +45,23 @@ public abstract class Constants {
 	/** The conf property name for the JMXMP listening port */
 	public static final String CONF_JMXMP_PORT = "jmxmp.port";
 	/** The default JMXMP listening port */
-	public static final int DEFAULT_JMXMP_PORT = 2934;
+	public static final int DEFAULT_JMXMP_PORT = 4245;
 
 	/** The conf property name for the JMXMP bind interface */
 	public static final String CONF_JMXMP_IFACE = "jmxmp.iface";
 	/** The default JMXMP bind interface */
 	public static final String DEFAULT_JMXMP_IFACE = "0.0.0.0";
+	
+	/** The conf property name for the Metrics MBeanServer JMXMP listening port */
+	public static final String CONF_METRICS_JMXMP_PORT = "jmxmp.port";
+	/** The default Metrics MBeanServer JMXMP listening port */
+	public static final int DEFAULT_METRICS_JMXMP_PORT = 4243;
+
+	/** The conf property name for the Metrics MBeanServer JMXMP bind interface */
+	public static final String CONF_METRICS_JMXMP_IFACE = "jmxmp.iface";
+	/** The default Metrics MBeanServer JMXMP bind interface */
+	public static final String DEFAULT_METRICS_JMXMP_IFACE = "0.0.0.0";
+	
 	
 	/** The conf property name for the netty boss pool thread count */
 	public static final String CONF_NETTY_BOSS_THREADS = "netty.poolsize.boss";

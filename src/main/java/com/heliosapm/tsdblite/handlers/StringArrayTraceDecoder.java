@@ -21,6 +21,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.heliosapm.tsdblite.metric.MetricCache;
 import com.heliosapm.tsdblite.metric.Trace;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -38,19 +39,24 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 public class StringArrayTraceDecoder extends MessageToMessageDecoder<String[]> {
 	/** Instance logger */
 	protected final Logger log = LoggerFactory.getLogger(getClass());
+	/** The endpoint where metrics are submitted to */
+	final MetricCache metricCache;
+	
 
 	/**
 	 * Creates a new StringArrayTraceDecoder
 	 */
 	public StringArrayTraceDecoder() {
+		metricCache = MetricCache.getInstance();
 	}
 
 	/**
 	 * Creates a new StringArrayTraceDecoder
 	 * @param inboundMessageType The type of the inbound message
 	 */
-	public StringArrayTraceDecoder(Class<? extends String[]> inboundMessageType) {
+	public StringArrayTraceDecoder(final Class<? extends String[]> inboundMessageType) {
 		super(inboundMessageType);
+		metricCache = MetricCache.getInstance();
 	}
 	
 	/**
@@ -61,6 +67,7 @@ public class StringArrayTraceDecoder extends MessageToMessageDecoder<String[]> {
 	protected void decode(final ChannelHandlerContext ctx, final String[] msg, final List<Object> out) throws Exception {
 		final Trace t = parseTrace(msg);
 		log.info("Received Metric: [{}]", t);
+		metricCache.submit(t);
 		out.add(t);		
 	}
 	
