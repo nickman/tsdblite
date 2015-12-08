@@ -15,13 +15,11 @@
  */
 package com.heliosapm.tsdblite.handlers;
 
-import io.netty.channel.Channel;
-import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
 
 import com.heliosapm.tsdblite.json.JSON;
+import com.heliosapm.tsdblite.json.JSONException;
 import com.heliosapm.tsdblite.metric.MetricCache;
 import com.heliosapm.tsdblite.metric.Trace;
 
@@ -54,15 +52,29 @@ public class SubmitTracesHandler extends HttpRequestHandler {
 	@Override
 	protected void process(final TSDBHttpRequest request) {
 		log.info("Processing [{}]", request.getRequest());
-		final Channel channel = request.getChannel();
-		final FullHttpRequest req = request.getRequest();		
-		final Trace[] traces = JSON.parseToObject(req.content(), Trace[].class);
-		for(Trace trace: traces) {
-			log.info("TRACE: {}", trace);
-			
+		final FullHttpRequest req = request.getRequest();	
+		if(!request.hasContent()) {
+			request.send400("No content sent for route [", request.getRoute(), "]");
+			return;
 		}
-		request.getChannel().write(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT));
+		final ByteBuf content = req.content();
+		final Trace[] traces;
+		try {
+			if(content.getByte(0)=='{') {
+				traces = new Trace[]{JSON.parseToObject(req.content(), Trace.class)};
+			} else {
+				traces = JSON.parseToObject(req.content(), Trace[].class);
+			}
+		} catch (JSONException jex) {
+			request.send400("Invalid JSON payload for route [", request.getRoute(), "]:", jex.toString());
+			return;
+		}
 		
+		for(Trace trace: traces) {
+			log.debug("TRACE: {}", trace);
+			metricCache.submit(trace);
+		}
+		request.send204();		
 	}
 
 	

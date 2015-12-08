@@ -42,6 +42,10 @@ public interface AppMetricMXBean {
 	
 	/** The JMX notification type for a new submission */
 	public static final String NOTIF_NEW_SUB = "metric.submission";
+	/** The JMX notification type for a new metric */
+	public static final String NOTIF_NEW_METRIC = "metric.new";
+	/** The JMX notification type for a retired metric */
+	public static final String NOTIF_RETIRED_METRIC = "metric.retired";
 	
 	/**
 	 * Returns the last value submitted or null if no submissions have occurred

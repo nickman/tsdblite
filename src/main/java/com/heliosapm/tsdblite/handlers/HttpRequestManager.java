@@ -19,6 +19,8 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,9 +78,20 @@ public class HttpRequestManager extends SimpleChannelInboundHandler<FullHttpRequ
 	@Override
 	protected void messageReceived(final ChannelHandlerContext ctx, final FullHttpRequest msg) throws Exception {
 		try {
-			final TSDBHttpRequest r = new TSDBHttpRequest(msg, ctx.channel());
+			final TSDBHttpRequest r = new TSDBHttpRequest(msg, ctx.channel(), ctx);
 			final HttpRequestHandler handler = requestHandlers.get(r.getRoute());
-			handler.process(r);
+			if(handler==null) {
+				r.send404().addListener(new GenericFutureListener<Future<? super Void>>() {
+					public void operationComplete(Future<? super Void> f) throws Exception {
+						log.info("404 Complete: success: {}", f.isSuccess());
+						if(!f.isSuccess()) {
+							log.error("Error sending 404", f.cause());
+						}
+					};
+				});
+				return;
+			}
+			handler.process(r);			
 		} catch (Exception ex) {
 			log.error("HttpRequest Routing Error", ex);
 		}

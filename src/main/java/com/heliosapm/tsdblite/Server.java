@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.heliosapm.tsdblite.handlers.ProtocolSwitch;
 import com.heliosapm.tsdblite.jmx.ForkJoinPoolManager;
+import com.heliosapm.tsdblite.metric.MetricCache;
 import com.heliosapm.utils.config.ConfigurationHelper;
 import com.heliosapm.utils.jmx.JMXHelper;
 
@@ -138,7 +139,7 @@ public class Server extends ChannelInitializer<SocketChannel> {
 		bootStrap = new ServerBootstrap();
 		groupExecutor = new DefaultEventExecutor(channelGroupPool);
 		channelGroup = new DefaultChannelGroup("TSDBLite", groupExecutor);
-		
+		MetricCache.getInstance(); // fire up the metric cache before we start taking calls	
 		log.info("Selector: {}", selectorProvider.getClass().getName());
 		bootStrap.group(bossGroup, workerGroup)
 			.channel(NioServerSocketChannel.class)
@@ -178,6 +179,7 @@ public class Server extends ChannelInitializer<SocketChannel> {
 	protected void initChannel(final SocketChannel ch) throws Exception {		
 		channelGroup.add(ch);
 		ch.closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
+			@Override
 			public void operationComplete(Future<? super Void> future) throws Exception {
 				log.info("\n\t==============================\n\tChannel Closed [{}]\n\t==============================", ch.id());
 			};

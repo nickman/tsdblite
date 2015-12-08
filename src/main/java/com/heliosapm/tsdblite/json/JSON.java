@@ -22,12 +22,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -64,6 +66,7 @@ import com.heliosapm.utils.jmx.JMXHelper;
  */
 
 public class JSON {
+	public static final Charset UTF8 = Charset.forName("UTF8");
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
 	static {
 		jsonMapper.configure(JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
@@ -157,7 +160,7 @@ public class JSON {
 	}
 	
 	/**
-	 * Deserializes a JSON formatted byte array to a specific class type
+	 * Deserializes a JSON/UTF8 formatted byte array to a specific class type
 	 * <b>Note:</b> If you get mapping exceptions you may need to provide a 
 	 * TypeReference
 	 * @param json The buffer to deserialize from
@@ -168,13 +171,32 @@ public class JSON {
 	 * @throws JSONException if the data could not be parsed
 	 */
 	public static final <T> T parseToObject(final ByteBuf json, final Class<T> pojo) {
+		return parseToObject(json, pojo, UTF8);
+	}
+	
+	
+	/**
+	 * Deserializes a JSON formatted byte array to a specific class type
+	 * <b>Note:</b> If you get mapping exceptions you may need to provide a 
+	 * TypeReference
+	 * @param json The buffer to deserialize from
+	 * @param pojo The class type of the object used for deserialization
+	 * @param charset The character set of the content type in the buffer
+	 * @return An object of the {@code pojo} type
+	 * @throws IllegalArgumentException if the data or class was null or parsing 
+	 * failed
+	 * @throws JSONException if the data could not be parsed
+	 */
+	public static final <T> T parseToObject(final ByteBuf json, final Class<T> pojo, final Charset charset) {
 		if (json == null)
 			throw new IllegalArgumentException("Incoming buffer was null");
 		if (pojo == null)
 			throw new IllegalArgumentException("Missing class type");
+		if(charset==null) throw new IllegalArgumentException("Missing charset");
 		InputStream is = new ByteBufInputStream(json);
+		InputStreamReader isr = new InputStreamReader(is, charset);
 		try {
-			return jsonMapper.readValue(is, pojo);
+			return jsonMapper.readValue(isr, pojo);
 		} catch (JsonParseException e) {
 			throw new IllegalArgumentException(e);
 		} catch (JsonMappingException e) {
@@ -183,6 +205,7 @@ public class JSON {
 			throw new JSONException(e);
 		} finally {
 			if(is!=null) try { is.close(); } catch (Exception x) {/* No Op */}
+			if(isr!=null) try { isr.close(); } catch (Exception x) {/* No Op */}
 		}
 	}
 	

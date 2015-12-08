@@ -114,19 +114,17 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
     }
 
     private void switchToHttp(ChannelHandlerContext ctx) {
-        ChannelPipeline p = ctx.pipeline();     
-        
-        
-        
-        
+        ChannelPipeline p = ctx.pipeline();    
+        p.addLast("logging", loggingHandler);
         p.addLast("httpCodec", new HttpServerCodec());
+        p.addLast(new HttpObjectAggregator(1048576));
         
+        //p.addLast("logging", loggingHandler);
         p.addLast("inflater", new HttpContentDecompressor());
-        p.addLast("encoder", new HttpResponseEncoder());
+        //p.addLast("encoder", new HttpResponseEncoder());
         p.addLast("deflater", new HttpContentCompressor());
-        
-        p.addLast("httpAggr", new HttpObjectAggregator(65536));
-//        p.addLast("logging", loggingHandler);
+        //p.addLast("httpAggr", new HttpObjectAggregator(65536));
+        //p.addLast("logging", loggingHandler);
         p.addLast("requestManager", HttpRequestManager.getInstance());        
         p.remove(this);
     }

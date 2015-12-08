@@ -26,9 +26,9 @@ package com.heliosapm.tsdblite.metric;
 
 import io.netty.channel.Channel;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerDelegate;
@@ -41,6 +41,7 @@ import org.cliffc.high_scale_lib.NonBlockingHashMap;
 import org.cliffc.high_scale_lib.NonBlockingHashMapLong;
 import org.cliffc.high_scale_lib.NonBlockingHashSet;
 
+import com.heliosapm.tsdblite.events.Event;
 import com.heliosapm.tsdblite.jmx.Util;
 import com.heliosapm.tsdblite.metric.AppMetric.SubNotif;
 import com.heliosapm.utils.collections.FluentMap;
@@ -80,13 +81,13 @@ public class MetricSubscription implements NotificationListener {
 			final ObjectName on = ((MBeanServerNotification)notification).getMBeanName();
 			if(objectNames.add(on)) {
 				JMXHelper.addNotificationListener(metricServer, on, this, null, null);
-				final SubNotif initial = MetricCache.getInstance().getSubNotif(on);
-				if(initial!=null) {
-					final Map<String, Object> data = FluentMap.newMap(String.class, Object.class).fput("rtype", "new-initial-data").fput("data", initial);
-					for(Channel channel: subscribedChannels.values()) {
-						channel.writeAndFlush(data);
-					}
-				}								
+				final Map<String, Object> data = FluentMap
+						.newMap(String.class, Object.class)
+						.fput(Event.KEY, Event.NEWMETRIC.code)
+						.fput(Event.DATA, new String[]{on.toString()}).map();
+				for(Channel channel: subscribedChannels.values()) {
+					channel.writeAndFlush(data);
+				}
 			}
 		}
 	};
@@ -95,7 +96,16 @@ public class MetricSubscription implements NotificationListener {
 	protected final NotificationListener onUnReg = new NotificationListener(){
 		@Override
 		public void handleNotification(final Notification notification, final Object handback) {			
-			objectNames.remove(((MBeanServerNotification)notification).getMBeanName());
+			final ObjectName on = ((MBeanServerNotification)notification).getMBeanName();			
+			if(objectNames.remove(on)) {
+				final Map<String, Object> data = FluentMap
+						.newMap(String.class, Object.class)
+						.fput(Event.KEY, Event.RETIREDMETRIC.code)
+						.fput(Event.DATA, new String[]{on.toString()}).map();
+				for(Channel channel: subscribedChannels.values()) {
+					channel.writeAndFlush(data);
+				}				
+			}
 		}
 	};
 	
@@ -146,13 +156,11 @@ public class MetricSubscription implements NotificationListener {
 	public void subscribe(final Channel channel) {
 		if(channel==null) throw new IllegalArgumentException("The passed channel was null");
 		if(subscribedChannels.putIfAbsent(channel.id().asLongText(), channel)==null) {
-			final List<SubNotif> initial = new ArrayList<SubNotif>(objectNames.size());
+			final Set<String> initial = new HashSet<String>(objectNames.size());
 			for(ObjectName on: objectNames) {
-				SubNotif sn = MetricCache.getInstance().getSubNotif(on);
-				if(sn==null) continue;
-				initial.add(sn);
+				initial.add(on.toString());
 			}
-			channel.writeAndFlush(FluentMap.newMap(String.class, Object.class).fput("rtype", "initial-data").fput("data", initial));
+			channel.writeAndFlush(FluentMap.newMap(String.class, Object.class).fput(Event.KEY, Event.NEWSUBMISSION.code).fput(Event.DATA, initial));
 		}
 	}
 	
@@ -175,9 +183,14 @@ public class MetricSubscription implements NotificationListener {
 	 * @see javax.management.NotificationListener#handleNotification(javax.management.Notification, java.lang.Object)
 	 */
 	@Override
-	public void handleNotification(Notification notification, Object handback) {
-		// TODO Auto-generated method stub
-		
+	public void handleNotification(final Notification notification, final Object handback) {		
+		final Map<String, Object> data = FluentMap
+				.newMap(String.class, Object.class)
+				.fput(Event.KEY, Event.NEWSUBMISSION.code)
+				.fput(Event.DATA, notification.getUserData()).map();
+		for(Channel channel: subscribedChannels.values()) {
+			channel.writeAndFlush(data);
+		}		
 	}
 
 	/**

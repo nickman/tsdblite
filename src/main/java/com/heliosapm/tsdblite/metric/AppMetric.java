@@ -28,6 +28,7 @@ import javax.management.NotificationListener;
 import javax.management.ObjectName;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.heliosapm.tsdblite.events.Event;
 import com.heliosapm.tsdblite.json.JSON;
 import com.heliosapm.tsdblite.metric.MetricCache.Metric;
 import com.heliosapm.tsdblite.metric.MetricCache.MetricMBean;
@@ -72,7 +73,7 @@ public class AppMetric extends NotificationBroadcasterSupport implements AppMetr
 		super(SharedNotificationExecutor.getInstance(), NOTIFS);
 		if(metric==null) throw new IllegalArgumentException("The passed metric was null");
 		this.metric = metric;
-		objectName = this.metric.toObjectName();
+		objectName = this.metric.toObjectName();		
 	}
 	
 	/**
