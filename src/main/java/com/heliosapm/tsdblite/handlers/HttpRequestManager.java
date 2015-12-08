@@ -83,7 +83,7 @@ public class HttpRequestManager extends SimpleChannelInboundHandler<FullHttpRequ
 			if(handler==null) {
 				r.send404().addListener(new GenericFutureListener<Future<? super Void>>() {
 					public void operationComplete(Future<? super Void> f) throws Exception {
-						log.info("404 Complete: success: {}", f.isSuccess());
+						log.info("404 Not Found for {} Complete: success: {}", r.getRoute(), f.isSuccess());
 						if(!f.isSuccess()) {
 							log.error("Error sending 404", f.cause());
 						}

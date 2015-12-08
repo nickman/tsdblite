@@ -66,6 +66,7 @@ public class SubmitTracesHandler extends HttpRequestHandler {
 				traces = JSON.parseToObject(req.content(), Trace[].class);
 			}
 		} catch (JSONException jex) {
+			log.error("Failed to parse JSON payload", jex);
 			request.send400("Invalid JSON payload for route [", request.getRoute(), "]:", jex.toString());
 			return;
 		}
