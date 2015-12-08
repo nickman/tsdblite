@@ -207,18 +207,19 @@ public class MetricCache {
 		if(appMetric==null || appMetric==AppMetric.PLACEHOLDER) {			
 			appMetric = new AppMetric(new Metric(node, hashCode));
 			metricCache.replace(hashCode, appMetric);			
-			JMXHelper.registerMBean(metricMBeanServer, appMetric.getMetricInstance().toObjectName(), appMetric);
+			JMXHelper.registerMBean(metricMBeanServer, appMetric.getMetricInstance().toHostObjectName(), appMetric);
 		}
 		return appMetric.getMetricInstance();		
 	}
 	
 	private MetricCache() {
-		metricMBeanServer = MBeanServerFactory.createMBeanServer("tsdblite");
-		final int port = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_METRICS_JMXMP_PORT, Constants.DEFAULT_METRICS_JMXMP_PORT);
-		final String iface = ConfigurationHelper.getSystemThenEnvProperty(Constants.CONF_METRICS_JMXMP_IFACE, Constants.DEFAULT_METRICS_JMXMP_IFACE);
-		JMXHelper.fireUpJMXMPServer(iface, port, metricMBeanServer);
-		JMXHelper.remapMBeans(JMXHelper.objectName("java.lang:*"), JMXHelper.getHeliosMBeanServer(), metricMBeanServer); 
-		JMXHelper.remapMBeans(JMXHelper.objectName("java.nio:*"), JMXHelper.getHeliosMBeanServer(), metricMBeanServer);
+		metricMBeanServer = JMXHelper.getHeliosMBeanServer(); 
+				//MBeanServerFactory.createMBeanServer("tsdblite");
+//		final int port = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_METRICS_JMXMP_PORT, Constants.DEFAULT_METRICS_JMXMP_PORT);
+//		final String iface = ConfigurationHelper.getSystemThenEnvProperty(Constants.CONF_METRICS_JMXMP_IFACE, Constants.DEFAULT_METRICS_JMXMP_IFACE);
+//		JMXHelper.fireUpJMXMPServer(iface, port, metricMBeanServer);
+//		JMXHelper.remapMBeans(JMXHelper.objectName("java.lang:*"), JMXHelper.getHeliosMBeanServer(), metricMBeanServer); 
+//		JMXHelper.remapMBeans(JMXHelper.objectName("java.nio:*"), JMXHelper.getHeliosMBeanServer(), metricMBeanServer);
 	}
 	
 	/**
@@ -389,6 +390,25 @@ public class MetricCache {
 			return JMXHelper.objectName(new StringBuilder(metricName)
 				.append(":").append(tagsToStr())
 			);
+		}
+		
+		public ObjectName toHostObjectName() {
+			final StringBuilder b = new StringBuilder("metrics.");
+			TreeMap<String, String> tgs = new TreeMap<String, String>(tags);
+			String h = tgs.remove("host");
+			String a = tgs.remove("app");
+			final String host = h==null ? "unknownhost" : h;
+			final int segIndex = metricName.indexOf('.');			
+			final String seg = segIndex==-1 ? metricName : metricName.substring(0, segIndex);
+			b.append(host).append(".").append(seg).append(":");
+			if(segIndex!=-1) {
+				tgs.put("app", metricName.substring(segIndex+1));
+			}
+			for(Map.Entry<String, String> entry: tgs.entrySet()) {
+				b.append(entry.getKey()).append("=").append(entry.getValue()).append(",");
+			}
+			b.deleteCharAt(b.length()-1);
+			return JMXHelper.objectName(b);
 		}
 		
 		/**

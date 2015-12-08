@@ -25,8 +25,8 @@ import io.netty.handler.codec.compression.ZlibWrapper;
 import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -115,16 +115,21 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
 
     private void switchToHttp(ChannelHandlerContext ctx) {
         ChannelPipeline p = ctx.pipeline();    
-        p.addLast("logging", loggingHandler);
-        p.addLast("httpCodec", new HttpServerCodec());
-        p.addLast(new HttpObjectAggregator(1048576));
+        
+//        p.addLast("httpCodec", new HttpServerCodec());
+        p.addLast("encoder", new HttpResponseEncoder());
+        p.addLast("decoder", new HttpRequestDecoder());
+        p.addLast("inflater", new HttpContentDecompressor());
+        p.addLast(new HttpObjectAggregator(1048576 * 2));
         
         //p.addLast("logging", loggingHandler);
-        p.addLast("inflater", new HttpContentDecompressor());
+        
+        
         //p.addLast("encoder", new HttpResponseEncoder());
         p.addLast("deflater", new HttpContentCompressor());
-        //p.addLast("httpAggr", new HttpObjectAggregator(65536));
+        
         //p.addLast("logging", loggingHandler);
+//        p.addLast("logging", loggingHandler);
         p.addLast("requestManager", HttpRequestManager.getInstance());        
         p.remove(this);
     }
@@ -141,6 +146,14 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
         log.info("switched to plain text: [{}]", ctx.channel().id());
     }
 	
+    /**
+     * {@inheritDoc}
+     * @see io.netty.channel.ChannelHandlerAdapter#exceptionCaught(io.netty.channel.ChannelHandlerContext, java.lang.Throwable)
+     */
+    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable t) throws Exception {    	
+    	log.error("Uncaught exception", t);
+    	//super.exceptionCaught(ctx, t);
+    }
 	
 	
     /**

@@ -16,7 +16,7 @@
 package com.heliosapm.tsdblite.handlers;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpRequest;
 
 import com.heliosapm.tsdblite.json.JSON;
 import com.heliosapm.tsdblite.json.JSONException;
@@ -52,18 +52,18 @@ public class SubmitTracesHandler extends HttpRequestHandler {
 	@Override
 	protected void process(final TSDBHttpRequest request) {
 		log.info("Processing [{}]", request.getRequest());
-		final FullHttpRequest req = request.getRequest();	
+		final HttpRequest req = request.getRequest();	
 		if(!request.hasContent()) {
 			request.send400("No content sent for route [", request.getRoute(), "]");
 			return;
 		}
-		final ByteBuf content = req.content();
+		final ByteBuf content = request.getContent();
 		final Trace[] traces;
 		try {
 			if(content.getByte(0)=='{') {
-				traces = new Trace[]{JSON.parseToObject(req.content(), Trace.class)};
+				traces = new Trace[]{JSON.parseToObject(content, Trace.class)};
 			} else {
-				traces = JSON.parseToObject(req.content(), Trace[].class);
+				traces = JSON.parseToObject(content, Trace[].class);
 			}
 		} catch (JSONException jex) {
 			log.error("Failed to parse JSON payload", jex);

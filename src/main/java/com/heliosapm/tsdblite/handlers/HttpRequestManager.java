@@ -18,7 +18,7 @@ package com.heliosapm.tsdblite.handlers;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * <p><code>com.heliosapm.tsdblite.handlers.HttpRequestManager</code></p>
  */
 @Sharable
-public class HttpRequestManager extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class HttpRequestManager extends SimpleChannelInboundHandler<HttpRequest> {
 	/** The singleton instance */
 	private static volatile HttpRequestManager instance = null;
 	/** The singleton instance ctor lock */
@@ -76,7 +76,7 @@ public class HttpRequestManager extends SimpleChannelInboundHandler<FullHttpRequ
 	 * @see io.netty.channel.SimpleChannelInboundHandler#messageReceived(io.netty.channel.ChannelHandlerContext, java.lang.Object)
 	 */
 	@Override
-	protected void messageReceived(final ChannelHandlerContext ctx, final FullHttpRequest msg) throws Exception {
+	protected void messageReceived(final ChannelHandlerContext ctx, final HttpRequest msg) throws Exception {
 		try {
 			final TSDBHttpRequest r = new TSDBHttpRequest(msg, ctx.channel(), ctx);
 			final HttpRequestHandler handler = requestHandlers.get(r.getRoute());
@@ -96,6 +96,15 @@ public class HttpRequestManager extends SimpleChannelInboundHandler<FullHttpRequ
 			log.error("HttpRequest Routing Error", ex);
 		}
 	}
+	
+    /**
+     * {@inheritDoc}
+     * @see io.netty.channel.ChannelHandlerAdapter#exceptionCaught(io.netty.channel.ChannelHandlerContext, java.lang.Throwable)
+     */
+    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable t) throws Exception {    	
+    	log.error("Uncaught exception", t);
+    	//super.exceptionCaught(ctx, t);
+    }
 	
 
 }

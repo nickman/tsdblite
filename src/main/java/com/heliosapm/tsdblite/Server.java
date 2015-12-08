@@ -177,7 +177,7 @@ public class Server extends ChannelInitializer<SocketChannel> {
 	 */
 	@Override
 	protected void initChannel(final SocketChannel ch) throws Exception {		
-		channelGroup.add(ch);
+		channelGroup.add(ch);		
 		ch.closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
 			@Override
 			public void operationComplete(Future<? super Void> future) throws Exception {
