@@ -115,7 +115,7 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
 
     private void switchToHttp(ChannelHandlerContext ctx) {
         ChannelPipeline p = ctx.pipeline();    
-        p.addLast("logging", loggingHandler);
+        //p.addLast("logging", loggingHandler);
         p.addLast("httpCodec", new HttpServerCodec());
         p.addLast(new HttpObjectAggregator(1048576));
         
