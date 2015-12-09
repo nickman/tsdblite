@@ -23,6 +23,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
@@ -45,7 +46,7 @@ import com.google.common.net.HttpHeaders;
 
 public class TSDBHttpRequest {
 	/** The incoming HTTP request */
-	protected final FullHttpRequest request;
+	protected final HttpRequest request;
 	/** The channel the request came in on */
 	protected final Channel channel;
 	/** The channel handler context of the http request router */
@@ -75,7 +76,7 @@ public class TSDBHttpRequest {
 	 * @param channel The channel the request came in on
 	 * @param ctx The http request router's channel handler context
 	 */
-	protected TSDBHttpRequest(final FullHttpRequest request, final Channel channel, final ChannelHandlerContext ctx) {
+	protected TSDBHttpRequest(final HttpRequest request, final Channel channel, final ChannelHandlerContext ctx) {
 		this.request = request;
 		this.channel = channel;
 		this.ctx = ctx;
@@ -127,7 +128,7 @@ public class TSDBHttpRequest {
 	 * Returns the HTTP request
 	 * @return the HTTP request
 	 */
-	public FullHttpRequest getRequest() {
+	public HttpRequest getRequest() {
 		return request;
 	}
 
@@ -224,10 +225,25 @@ public class TSDBHttpRequest {
 	 * @return true if the request has a readable content body, false otherwise
 	 */
 	public boolean hasContent() {
-		final ByteBuf content = request.content();
-		if(content==null) return false;
-		if(content.readableBytes()<1) return false;
-		return true;
+		if(request instanceof FullHttpRequest) {
+			final ByteBuf content = ((FullHttpRequest)request).content();
+			if(content==null) return false;
+			if(content.readableBytes()<1) return false;
+			return true;			
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns the http request content
+	 * @return the http request content
+	 */
+	public ByteBuf getContent() {
+		if(request instanceof FullHttpRequest) {
+			final ByteBuf bb = ((FullHttpRequest)request).content();
+			return bb==null ? EMPTY_BUFF :bb;
+		}
+		return EMPTY_BUFF;
 	}
 	
 	/**
