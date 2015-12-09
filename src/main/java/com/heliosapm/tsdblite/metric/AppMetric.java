@@ -19,18 +19,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.management.ListenerNotFoundException;
 import javax.management.MBeanNotificationInfo;
 import javax.management.Notification;
-import javax.management.NotificationBroadcasterSupport;
-import javax.management.NotificationFilter;
-import javax.management.NotificationListener;
 import javax.management.ObjectName;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.heliosapm.tsdblite.json.JSON;
 import com.heliosapm.tsdblite.metric.MetricCache.Metric;
 import com.heliosapm.tsdblite.metric.MetricCache.MetricMBean;
+import com.heliosapm.utils.jmx.ExposedSubscribersNotificationBroadcaster;
 import com.heliosapm.utils.jmx.SharedNotificationExecutor;
 import com.heliosapm.utils.reflect.PrivateAccessor;
 
@@ -42,7 +39,7 @@ import com.heliosapm.utils.reflect.PrivateAccessor;
  * <p><code>com.heliosapm.tsdblite.metric.AppMetric</code></p>
  */
 
-public class AppMetric extends NotificationBroadcasterSupport implements AppMetricMXBean {
+public class AppMetric extends ExposedSubscribersNotificationBroadcaster implements AppMetricMXBean {
 	/** The metric */
 	protected final Metric metric;
 	/** The JMX ObjectName the metric is registered under */
@@ -54,8 +51,6 @@ public class AppMetric extends NotificationBroadcasterSupport implements AppMetr
 	
 	/** Notification serial number generator */
 	protected final AtomicLong notifSerial = new AtomicLong(-1L);
-	/** A list of listeners reflected from the super so we know how many subscribers we have */
-	protected final List<?> subs = (List<?>)PrivateAccessor.getFieldValue(this, "listenerList");
 	
 	/** Place holder app metric */
 	public static final AppMetric PLACEHOLDER = new AppMetric();
@@ -92,7 +87,7 @@ public class AppMetric extends NotificationBroadcasterSupport implements AppMetr
 	public void submit(final Trace trace) {		
 		lastValue = trace.isDoubleType() ? trace.getDoubleValue() : trace.getLongValue();
 		lastSubmission = trace.getTimestampMs();
-		if(!subs.isEmpty()) {
+		if(hasSubscribers()) {
 			final long serial = notifSerial.incrementAndGet();
 			final Notification notif = new Notification(NOTIF_NEW_SUB, objectName, notifSerial.incrementAndGet(), lastSubmission, JSON.serializeToString(new SubNotif(objectName.toString(), trace.isDoubleType() ? trace.getDoubleValue() : trace.getLongValue(), lastSubmission, serial)));
 			notif.setUserData(trace);
@@ -139,7 +134,7 @@ public class AppMetric extends NotificationBroadcasterSupport implements AppMetr
 	 */
 	@Override
 	public long getNotificationsSent() {		
-		return notifSerial.get();
+		return getDispatchCount();
 	}
 	
 
@@ -151,8 +146,10 @@ public class AppMetric extends NotificationBroadcasterSupport implements AppMetr
 	 */
 	@Override
 	public int getSubscriberCount() {
-		return subs.size();
+		return size();
 	}
+	
+	
 
 	/**
 	 * Returns the last value submitted or null if no submissions have occurred

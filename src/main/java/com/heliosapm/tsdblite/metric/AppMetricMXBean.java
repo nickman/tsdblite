@@ -25,6 +25,7 @@
 package com.heliosapm.tsdblite.metric;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.management.ObjectName;
 
@@ -83,6 +84,12 @@ public interface AppMetricMXBean {
 	 * @return the number of submission subscribers
 	 */
 	public int getSubscriberCount();
+	
+	/**
+	 * Returns info on the current subscribers
+	 * @return info on the current subscribers
+	 */
+	public Set<String> getSubscriberInfo();	
 	
 	/**
 	 * Returns the count of submission notifications sent
