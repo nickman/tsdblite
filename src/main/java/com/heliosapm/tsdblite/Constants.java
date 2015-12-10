@@ -88,6 +88,12 @@ public abstract class Constants {
 	/** The default netty channel group pool thread count */
 	public static final int DEFAULT_NETTY_CGROUP_THREADS = CORES;
 	
+	/** The conf property name for the netty event executor thread count */
+	public static final String CONF_NETTY_EVENT_THREADS = "netty.poolsize.group";
+	/** The default netty event executor thread count */
+	public static final int DEFAULT_NETTY_EVENT_THREADS = CORES;
+	
+	
 	/** The conf property name for the netty server channel logging level */
 	public static final String CONF_NETTY_SERVER_LOGLEVEL = "netty.loglevel.server";
 	/** The default netty server channel logging level */

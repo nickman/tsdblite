@@ -30,11 +30,22 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.DefaultExecutorServiceFactory;
+import io.netty.util.internal.chmv8.ForkJoinPool;
 
 import java.util.List;
 
+import javax.management.ObjectName;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.heliosapm.tsdblite.Constants;
+import com.heliosapm.tsdblite.Server;
+import com.heliosapm.tsdblite.jmx.ForkJoinPoolManager;
+import com.heliosapm.utils.config.ConfigurationHelper;
+import com.heliosapm.utils.jmx.JMXHelper;
 
 /**
  * <p>Title: ProtocolSwitch</p>
@@ -52,12 +63,32 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
 	/** Instance logger */
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 	
+	/** Executor service factory */
+	protected static final DefaultExecutorServiceFactory executorServiceFactory = new DefaultExecutorServiceFactory(ProtocolSwitch.class);
+	/** The netty channel group thread pool */
+	protected static final ForkJoinPool eventPool;
+	/** The event executor */
+	protected static final DefaultEventExecutorGroup eventExecutorGroup; 
+
+	
     private static final StringEncoder PLAINTEXT_ENCODER = new StringEncoder();
     private static final WordSplitter PLAINTEXT_DECODER = new WordSplitter();
     private static final StringArrayTraceDecoder TRACE_DECODER = new StringArrayTraceDecoder();
     /** The child channel logging handler */
-    private static final LoggingHandler loggingHandler = new LoggingHandler(ProtocolSwitch.class, LogLevel.INFO); 	 
-	
+    @SuppressWarnings("unused")
+	private static final LoggingHandler loggingHandler = new LoggingHandler(ProtocolSwitch.class, LogLevel.INFO); 	
+    
+	 /** The event pool JMX ObjectName */
+	public static final ObjectName EVENT_POOL_ON = JMXHelper.objectName(Server.class.getPackage().getName() + ":service=ForkJoinPool,name=EventPool");
+
+    
+	static {
+		final int eventThreads = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_NETTY_EVENT_THREADS, Constants.DEFAULT_NETTY_EVENT_THREADS);
+		eventPool = (ForkJoinPool)executorServiceFactory.newExecutorService(eventThreads);
+		eventExecutorGroup = new DefaultEventExecutorGroup(eventThreads, eventPool);
+		ForkJoinPoolManager.register(eventPool, EVENT_POOL_ON);		
+	}
+
 
 	
 	/**
@@ -121,6 +152,8 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
 //        p.addLast("httpCodec", new HttpServerCodec());
         p.addLast("encoder", new HttpResponseEncoder());
         p.addLast("decoder", new HttpRequestDecoder());
+        
+        
         p.addLast("inflater", new HttpContentDecompressor());
         p.addLast(new HttpObjectAggregator(1048576 * 2));
         
@@ -132,7 +165,8 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
         
         //p.addLast("logging", loggingHandler);
 //        p.addLast("logging", loggingHandler);
-        p.addLast("requestManager", HttpRequestManager.getInstance());        
+        p.addLast(eventExecutorGroup, "requestManager", HttpRequestManager.getInstance());
+//        p.addLast("requestManager", HttpRequestManager.getInstance());        
         p.remove(this);
     }
     
