@@ -62,6 +62,16 @@ public abstract class Constants {
 	/** The default Metrics MBeanServer JMXMP bind interface */
 	public static final String DEFAULT_METRICS_JMXMP_IFACE = "0.0.0.0";
 	
+	/** The conf property name for the mbean server name that metrics are published to */
+	public static final String CONF_METRICS_MSERVER = "metrics.domain";
+	/** The default mbean server name that metrics are published to */
+	public static final String DEFAULT_METRICS_MSERVER = "DefaultDomain";
+
+	/** The conf property name for the "host/app" first object name model of published metric mbeans fflag */
+	public static final String CONF_METRICS_HOSTAPP_MODE = "metrics.hostapp";
+	/** The default mbean server name that metrics are published to */
+	public static final boolean DEFAULT_METRICS_HOSTAPP_MODE = false;
+	
 	
 	/** The conf property name for the netty boss pool thread count */
 	public static final String CONF_NETTY_BOSS_THREADS = "netty.poolsize.boss";

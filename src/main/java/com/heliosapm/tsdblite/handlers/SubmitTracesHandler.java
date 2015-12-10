@@ -17,11 +17,15 @@ package com.heliosapm.tsdblite.handlers;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import com.heliosapm.tsdblite.json.JSON;
 import com.heliosapm.tsdblite.json.JSONException;
 import com.heliosapm.tsdblite.metric.MetricCache;
 import com.heliosapm.tsdblite.metric.Trace;
+import com.heliosapm.utils.time.SystemClock;
+import com.heliosapm.utils.time.SystemClock.ElapsedTime;
 
 
 /**
@@ -51,7 +55,7 @@ public class SubmitTracesHandler extends HttpRequestHandler {
 	 */
 	@Override
 	protected void process(final TSDBHttpRequest request) {
-		log.info("Processing [{}]", request.getRequest());
+		log.debug("Processing [{}]", request.getRequest());
 		final HttpRequest req = request.getRequest();	
 		if(!request.hasContent()) {
 			request.send400("No content sent for route [", request.getRoute(), "]");
@@ -70,12 +74,20 @@ public class SubmitTracesHandler extends HttpRequestHandler {
 			request.send400("Invalid JSON payload for route [", request.getRoute(), "]:", jex.toString());
 			return;
 		}
-		
+		final ElapsedTime et = SystemClock.startClock();
 		for(Trace trace: traces) {
-			log.debug("TRACE: {}", trace);
+			//log.debug("TRACE: {}", trace);
 			metricCache.submit(trace);
-		}
-		request.send204();		
+		}		
+		request.send204().addListener(new GenericFutureListener<Future<? super Void>>() {
+			public void operationComplete(final Future<? super Void> f) throws Exception {
+				if(f.isSuccess()) {
+					log.info("Traces Processed: {}", et.printAvg("traces", traces.length));
+				} else {
+					log.error("Traces failed", f.cause());
+				}
+			};
+		});		
 	}
 
 	

@@ -16,6 +16,7 @@
 package com.heliosapm.tsdblite;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
@@ -25,6 +26,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutor;
 import io.netty.util.concurrent.DefaultExecutorServiceFactory;
 import io.netty.util.concurrent.Future;
@@ -182,9 +185,22 @@ public class Server extends ChannelInitializer<SocketChannel> {
 			@Override
 			public void operationComplete(Future<? super Void> future) throws Exception {
 				log.info("\n\t==============================\n\tChannel Closed [{}]\n\t==============================", ch.id());
+//				log.error("Close Back trace", new Exception());
+//				if(future.cause()!=null) {
+//					log.error("Close fail", future.cause());					
+//				}
 			};
 		});
+		ch.pipeline().addLast("IdleState", new IdleStateHandler(0, 0, 60));
 		ch.pipeline().addLast("ProtocolSwitch", new ProtocolSwitch());
+	}
+	
+	@Override
+	public void userEventTriggered(final ChannelHandlerContext ctx, final Object evt) throws Exception {
+		if (evt instanceof IdleStateEvent) {
+			log.info("\n\t ****************** Idle Event on Channel [{}]", ctx.channel().id().asShortText());
+		}
+		super.userEventTriggered(ctx, evt);
 	}
 
 }

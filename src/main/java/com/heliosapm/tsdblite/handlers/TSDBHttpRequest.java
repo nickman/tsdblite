@@ -188,7 +188,7 @@ public class TSDBHttpRequest {
 	 * @return the write completion future
 	 */
 	public ChannelFuture send204() {
-		return sendResponse(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT));
+		return sendResponse(new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT));
 	}
 	
 	private static HttpResponse response(final HttpResponseStatus status, final String...msgs) {

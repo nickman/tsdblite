@@ -23,8 +23,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
+import javax.management.remote.JMXServiceURL;
 
 import org.cliffc.high_scale_lib.NonBlockingHashMapLong;
 import org.slf4j.Logger;
@@ -213,14 +213,21 @@ public class MetricCache {
 	}
 	
 	private MetricCache() {
-		metricMBeanServer = JMXHelper.getHeliosMBeanServer(); 
-				//MBeanServerFactory.createMBeanServer("tsdblite");
-//		final int port = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_METRICS_JMXMP_PORT, Constants.DEFAULT_METRICS_JMXMP_PORT);
-//		final String iface = ConfigurationHelper.getSystemThenEnvProperty(Constants.CONF_METRICS_JMXMP_IFACE, Constants.DEFAULT_METRICS_JMXMP_IFACE);
-//		JMXHelper.fireUpJMXMPServer(iface, port, metricMBeanServer);
-//		JMXHelper.remapMBeans(JMXHelper.objectName("java.lang:*"), JMXHelper.getHeliosMBeanServer(), metricMBeanServer); 
-//		JMXHelper.remapMBeans(JMXHelper.objectName("java.nio:*"), JMXHelper.getHeliosMBeanServer(), metricMBeanServer);
+		 
+		final String jmxDomain = ConfigurationHelper.getSystemThenEnvProperty(Constants.CONF_METRICS_MSERVER, Constants.DEFAULT_METRICS_MSERVER);
+		if(!JMXHelper.getHeliosMBeanServer().getDefaultDomain().equals(jmxDomain)) {
+			metricMBeanServer = JMXHelper.createMBeanServer(jmxDomain, true);
+			final int port = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_METRICS_JMXMP_PORT, Constants.DEFAULT_METRICS_JMXMP_PORT);
+			if(port > -1) {
+				final String iface = ConfigurationHelper.getSystemThenEnvProperty(Constants.CONF_METRICS_JMXMP_IFACE, Constants.DEFAULT_METRICS_JMXMP_IFACE);
+				final JMXServiceURL surl = JMXHelper.fireUpJMXMPServer(iface, port, metricMBeanServer);
+				log.info("Metrics MBeanServer [{}] available at [{}]", jmxDomain, surl);
+			}
+		} else {
+			metricMBeanServer = JMXHelper.getHeliosMBeanServer();
+		}
 	}
+	
 	
 	/**
 	 * Submits a trace instance
