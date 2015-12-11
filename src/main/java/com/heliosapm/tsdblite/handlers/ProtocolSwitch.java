@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import com.heliosapm.tsdblite.Constants;
 import com.heliosapm.tsdblite.Server;
-import com.heliosapm.tsdblite.jmx.ForkJoinPoolManager;
+import com.heliosapm.tsdblite.jmx.ManagedForkJoinPool;
 import com.heliosapm.utils.config.ConfigurationHelper;
 import com.heliosapm.utils.jmx.JMXHelper;
 
@@ -86,7 +86,7 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
 		final int eventThreads = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_NETTY_EVENT_THREADS, Constants.DEFAULT_NETTY_EVENT_THREADS);
 		eventPool = (ForkJoinPool)executorServiceFactory.newExecutorService(eventThreads);
 		eventExecutorGroup = new DefaultEventExecutorGroup(eventThreads, eventPool);
-		ForkJoinPoolManager.register(eventPool, EVENT_POOL_ON);		
+		ManagedForkJoinPool.register(eventPool, EVENT_POOL_ON);		
 	}
 
 
