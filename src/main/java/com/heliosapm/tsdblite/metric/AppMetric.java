@@ -155,6 +155,7 @@ public class AppMetric extends ExposedSubscribersNotificationBroadcaster impleme
 	 * Returns the last value submitted or null if no submissions have occurred
 	 * @return the last value submitted
 	 */
+	@Override
 	public double getLastValue() {
 		return lastValue;
 	}
@@ -163,6 +164,7 @@ public class AppMetric extends ExposedSubscribersNotificationBroadcaster impleme
 	 * Returns the timestamp of the last submission as a long UTC 
 	 * @return the timestamp of the last submission
 	 */
+	@Override
 	public long getLastSubmission() {
 		return lastSubmission;
 	}
@@ -171,6 +173,7 @@ public class AppMetric extends ExposedSubscribersNotificationBroadcaster impleme
 	 * Returns the timestamp of the last submission as a java Date 
 	 * @return the timestamp of the last submission or null if one has not occurred
 	 */
+	@Override
 	public Date getLastSubmissionDate() {
 		return lastSubmission==-1L ? null : new Date(lastSubmission);
 	}
@@ -179,6 +182,7 @@ public class AppMetric extends ExposedSubscribersNotificationBroadcaster impleme
 	 * Returns the metric interface
 	 * @return the metric interface
 	 */
+	@Override
 	public MetricMBean getMetric() {
 		return metric;
 	}
@@ -197,8 +201,18 @@ public class AppMetric extends ExposedSubscribersNotificationBroadcaster impleme
 	 * Returns the JMX ObjectName for this metric 
 	 * @return the objectName
 	 */
+	@Override
 	public ObjectName getObjectName() {
 		return objectName;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.heliosapm.tsdblite.metric.AppMetricMXBean#getMetricHashCode()
+	 */
+	@Override
+	public long getMetricHashCode() {
+		return metric.getHashCode();
 	}
 
 	/**

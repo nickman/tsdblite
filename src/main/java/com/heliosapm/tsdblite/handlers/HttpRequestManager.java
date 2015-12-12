@@ -69,6 +69,7 @@ public class HttpRequestManager extends SimpleChannelInboundHandler<HttpRequest>
 	 */
 	private HttpRequestManager() {
 		requestHandlers.put("/api/put", new SubmitTracesHandler());
+		requestHandlers.put("/api/ws", new WebSocketUpgrade());
 	}
 	
 	/**

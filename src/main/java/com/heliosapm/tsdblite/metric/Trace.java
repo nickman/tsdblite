@@ -383,7 +383,8 @@ public class Trace implements Comparable<Trace>, Serializable {
 		@Override
 		public Trace deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			final JsonNode node = p.getCodec().readTree(p);			
-			final Metric metric = MetricCache.getInstance().getMetric(node);			
+			final Metric metric = MetricCache.getInstance().getMetric(node);	
+			if(metric==null) return null;
 			final Number v = node.get("value").numberValue();
 			final boolean isDouble = (v instanceof Double);
 			return new Trace(metric, isDouble, v.longValue(), v.doubleValue(), node.get("timestamp").longValue());
@@ -408,7 +409,10 @@ public class Trace implements Comparable<Trace>, Serializable {
 			final int size = node.size();
 			final Set<Trace> traces = new LinkedHashSet<Trace>(size);
 			for(int i = 0; i < size; i++) {
-				traces.add(JSON.parseToObject(node.get(i), Trace.class));
+				final Trace t = JSON.parseToObject(node.get(i), Trace.class);
+				if(t!=null) {
+					traces.add(JSON.parseToObject(node.get(i), Trace.class));
+				}
 			}
 			return traces.toArray(new Trace[size]);
 		}

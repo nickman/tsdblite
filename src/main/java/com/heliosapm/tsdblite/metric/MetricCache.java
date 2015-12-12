@@ -16,14 +16,23 @@
 package com.heliosapm.tsdblite.metric;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicLong;
 
+import javax.management.AttributeList;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.Query;
+import javax.management.QueryExp;
+import javax.management.StringValueExp;
 import javax.management.remote.JMXServiceURL;
 
 import org.cliffc.high_scale_lib.NonBlockingHashMapLong;
@@ -36,11 +45,15 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.PrimitiveSink;
 import com.heliosapm.tsdblite.Constants;
+import com.heliosapm.tsdblite.jmx.ManagedDefaultExecutorServiceFactory;
 import com.heliosapm.tsdblite.jmx.Util;
 import com.heliosapm.tsdblite.metric.AppMetric.SubNotif;
 import com.heliosapm.utils.config.ConfigurationHelper;
 import com.heliosapm.utils.jmx.JMXHelper;
+import com.heliosapm.utils.time.SystemClock;
 import com.heliosapm.utils.tuples.NVP;
+
+import jsr166e.LongAdder;
 
 /**
  * <p>Title: MetricCache</p>
@@ -50,7 +63,7 @@ import com.heliosapm.utils.tuples.NVP;
  * <p><code>com.heliosapm.tsdblite.metric.MetricCache</code></p>
  */
 
-public class MetricCache {
+public class MetricCache implements MetricCacheMXBean {
 	/** The singleton instance */
 	private static volatile MetricCache instance = null;
 	/** The singleton instance ctor lock */
@@ -65,6 +78,32 @@ public class MetricCache {
 	public static final Charset UTF8 = Charset.forName("UTF8");
 	/** The hashing function to compute hashes for metric names */
 	public static final HashFunction METRIC_NAME_HASHER = Hashing.murmur3_128();
+	
+	/** A counter for bad metric submissions */
+	private final LongAdder badMetrics = new LongAdder();
+	/** A counter for expired metrics */
+	private final LongAdder expiredMetrics = new LongAdder();
+	/** The last expiry dispatch elapsed time in ms */
+	private final AtomicLong lastExpiryDispatchTime = new AtomicLong();
+	/** The last expiry completion elapsed time in ms */
+	private final AtomicLong lastExpiryTime = new AtomicLong();
+	
+	
+	/** The expiry period on which expired metrics are scanned for in ms. */
+	final long expiryPeriod;
+	/** The maximum elapsed time an inactive metric can live for  in ms. */
+	final long expiry;
+	
+	/** The attribute names the expiry inquiry will request from each metric */
+	private static final String[] EXPIRY_ATTRIBUTES = new String[]{"MetricHashCode", "LastSubmission"};
+
+	
+	/** The expiry task pool */
+	private final ExecutorService expiryService = new ManagedDefaultExecutorServiceFactory("expiry").newExecutorService(4);
+	/** The expiry task scheduler thread */
+	private final Thread expiryThread;
+	/** The JMX query to find all registered instances of {@link com.heliosapm.tsdblite.metric.AppMetricMXBean} */
+	private final QueryExp metricBeanQuery = Query.isInstanceOf(new StringValueExp("com.heliosapm.tsdblite.metric.AppMetricMXBean"));
 	
 	/** Placeholder metric */
 	public final Metric PLACEHOLDER = new Metric();
@@ -202,14 +241,19 @@ public class MetricCache {
 	 * @return the metric
 	 */
 	public Metric getMetric(final JsonNode node) {
-		final long hashCode = hashCode(node);
-		AppMetric appMetric = metricCache.putIfAbsent(hashCode, AppMetric.PLACEHOLDER);
-		if(appMetric==null || appMetric==AppMetric.PLACEHOLDER) {			
-			appMetric = new AppMetric(new Metric(node, hashCode));
-			metricCache.replace(hashCode, appMetric);			
-			JMXHelper.registerMBean(metricMBeanServer, appMetric.getMetricInstance().toHostObjectName(), appMetric);
+		try {
+			final long hashCode = hashCode(node);
+			AppMetric appMetric = metricCache.putIfAbsent(hashCode, AppMetric.PLACEHOLDER);
+			if(appMetric==null || appMetric==AppMetric.PLACEHOLDER) {			
+				appMetric = new AppMetric(new Metric(node, hashCode));
+				metricCache.replace(hashCode, appMetric);			
+				JMXHelper.registerMBean(metricMBeanServer, appMetric.getMetricInstance().toHostObjectName(), appMetric);
+			}
+			return appMetric.getMetricInstance();
+		} catch (Exception ex) {
+			badMetrics.increment();
+			return null;
 		}
-		return appMetric.getMetricInstance();		
 	}
 	
 	private MetricCache() {
@@ -226,6 +270,50 @@ public class MetricCache {
 		} else {
 			metricMBeanServer = JMXHelper.getHeliosMBeanServer();
 		}
+		expiry = ConfigurationHelper.getLongSystemThenEnvProperty(Constants.CONF_METRIC_EXPIRY, Constants.DEFAULT_METRIC_EXPIRY);
+		expiryPeriod = ConfigurationHelper.getLongSystemThenEnvProperty(Constants.CONF_METRIC_EXPIRY_PERIOD, Constants.DEFAULT_METRIC_EXPIRY_PERIOD);
+		expiryThread = new Thread(new Runnable(){
+			@Override
+			public void run() {
+				while(true) {
+					
+					SystemClock.sleep(expiryPeriod);
+					final long now = System.currentTimeMillis();
+					final ObjectName[] metricObjectNames = JMXHelper.query(JMXHelper.ALL_MBEANS_FILTER, metricBeanQuery);
+					final Collection<Future<?>> taskFutures = new ArrayList<Future<?>>(metricObjectNames.length);					
+					for(final ObjectName on : metricObjectNames) {
+						taskFutures.add(expiryService.submit(new Runnable(){
+							@Override
+							public void run() {
+								try {
+									final Map<String, Object> attrMap = JMXHelper.getAttributes(on, EXPIRY_ATTRIBUTES);
+									final long lastActivity = (Long)attrMap.get("LastSubmission");
+									if(now - lastActivity > expiry) {
+										metricMBeanServer.unregisterMBean(on);
+										expiredMetrics.increment();
+										final long hc = (Long)attrMap.get("MetricHashCode");
+										metricCache.remove(hc);
+									}
+								} catch (Exception x) { /* No Op */ }
+							}
+						}));
+					}
+					final long dispatchElapsed = System.currentTimeMillis() - now;
+					lastExpiryDispatchTime.set(dispatchElapsed);
+					log.info("Expiry Dispatch for [{}] Metrics Completed in [{}] ms.", metricObjectNames.length, dispatchElapsed);
+					for(Future<?> f: taskFutures) {
+						try { f.get(); } catch (Exception x) {/* No Op */}
+					}
+					final long expiryElapsed = System.currentTimeMillis() - now;
+					lastExpiryTime.set(expiryElapsed);
+					log.info("Expiry Completed in [{}] ms.", expiryElapsed);
+				}
+			}
+		}, "MetricExpiryThread");
+		expiryThread.setDaemon(true);
+		expiryThread.setPriority(Thread.MAX_PRIORITY);
+		expiryThread.start();
+		JMXHelper.registerMBean(this, OBJECT_NAME);
 	}
 	
 	
@@ -234,8 +322,10 @@ public class MetricCache {
 	 * @param trace a trace instance
 	 */
 	public void submit(final Trace trace) {
-		final AppMetric appMetric = metricCache.get(trace.getHashCode());
-		appMetric.submit(trace);
+		if(trace!=null) {
+			final AppMetric appMetric = metricCache.get(trace.getHashCode());
+			appMetric.submit(trace);
+		}
 	}
 	
 	/**
@@ -422,6 +512,7 @@ public class MetricCache {
 		 * Returns the metric name
 		 * @return the metric name
 		 */
+		@Override
 		public String getMetricName() {
 			return metricName;
 		}
@@ -430,10 +521,12 @@ public class MetricCache {
 		 * Returns the metric tags
 		 * @return the metric tags
 		 */
+		@Override
 		public SortedMap<String, String> getTags() {
 			return tags;
 		}
 		
+		@Override
 		public String getTagStr() {
 			return tagsToStr();
 		}
@@ -442,6 +535,7 @@ public class MetricCache {
 		 * Returns the metric hash 
 		 * @return the metric hash
 		 */
+		@Override
 		public long getHashCode() {
 			return hashCode;
 		}
@@ -475,6 +569,97 @@ public class MetricCache {
 				return false;
 			return true;
 		}
+	}
+
+	/**
+	 * Returns the number of metrics in the metric cache
+	 * @return the metric cache size
+	 */
+	@Override
+	public long getMetricCacheSize() {
+		return metricCache.size();
+	}
+
+	/**
+	 * Returns the default domain of the metrics MBeanServer
+	 * @return the metric MBeanServer default domain
+	 */
+	@Override
+	public String getMetricMBeanServer() {
+		return metricMBeanServer.getDefaultDomain();
+	}
+	
+	/**
+	 * Returns the MBeanServer where metrics are being registered
+	 * @return the MBeanServer where metrics are being registered
+	 */
+	public MBeanServer getMetricMBeanServerInstance() {
+		return metricMBeanServer;
+	}
+	
+	/**
+	 * Returns the number of registered MBeans in the metrics MBeanServer.
+	 * This will be more than the number of metrics.
+	 * @return the number of registered MBeans in the metrics MBeanServer.
+	 */
+	@Override
+	public int getMetricMBeanServerMBeanCount() {
+		return metricMBeanServer.getMBeanCount();
+	}
+	
+
+	/**
+	 * Returns the cummulative number of bad metric submissions
+	 * @return the cummulative number of bad metric submissions
+	 */
+	@Override
+	public long getBadMetrics() {
+		return badMetrics.longValue();
+	}
+
+	/**
+	 * Returns the cummulative number of expired metrics
+	 * @return the cummulative number of expired metrics
+	 */
+	@Override
+	public long getExpiredMetrics() {
+		return expiredMetrics.longValue();
+	}
+
+	/**
+	 * Returns the elapsed time of the last expiry dispatch in ms.
+	 * @return the elapsed time of the last expiry dispatch in ms.
+	 */
+	@Override
+	public long getLastExpiryDispatchTime() {
+		return lastExpiryDispatchTime.get();
+	}
+
+	/**
+	 * Returns the elapsed time of the last expiry completion in ms.
+	 * @return the elapsed time of the last expiry completion in ms.
+	 */
+	@Override
+	public long getLastExpiryTime() {
+		return lastExpiryTime.get();
+	}
+
+	/**
+	 * Returns the expiry period in ms.
+	 * @return the expiry period in ms.
+	 */
+	@Override
+	public long getExpiryPeriod() {
+		return expiryPeriod;
+	}
+
+	/**
+	 * Returns the metric expiry in ms.
+	 * @return the metric expiry in ms.
+	 */
+	@Override
+	public long getExpiry() {
+		return expiry;
 	}
 	
 

@@ -48,8 +48,7 @@ public class ManagedDefaultExecutorServiceFactory implements ExecutorServiceFact
 	 */
 	@Override
 	public ExecutorService newExecutorService(final int parallelism) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ManagedForkJoinPool(name, parallelism, true);
 	}
 
 }

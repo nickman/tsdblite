@@ -55,8 +55,7 @@ public class SubmitTracesHandler extends HttpRequestHandler {
 	 */
 	@Override
 	protected void process(final TSDBHttpRequest request) {
-		log.debug("Processing [{}]", request.getRequest());
-		final HttpRequest req = request.getRequest();	
+		log.debug("Processing [{}]", request.getRequest());		
 		if(!request.hasContent()) {
 			request.send400("No content sent for route [", request.getRoute(), "]");
 			return;

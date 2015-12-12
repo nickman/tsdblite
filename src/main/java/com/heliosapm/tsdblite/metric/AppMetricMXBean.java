@@ -48,6 +48,8 @@ public interface AppMetricMXBean {
 	/** The JMX notification type for a retired metric */
 	public static final String NOTIF_RETIRED_METRIC = "metric.retired";
 	
+	
+	
 	/**
 	 * Returns the last value submitted or null if no submissions have occurred
 	 * @return the last value submitted
@@ -96,6 +98,12 @@ public interface AppMetricMXBean {
 	 * @return the count of submission notifications sent
 	 */
 	public long getNotificationsSent();
+	
+	/**
+	 * Returns the long hash code of the underlying metric 
+	 * @return the long hash code of the underlying metric
+	 */
+	public long getMetricHashCode();
 	
 
 }

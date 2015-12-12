@@ -45,5 +45,10 @@ public interface ManagedForkJoinPoolMXBean extends ForkJoinPoolManagement {
 	 * @return the number of submitted forkJoin tasks
 	 */
 	public long getForkJoinTasks();
+	
+	/**
+	 * Resets the task counters
+	 */
+	public void resetCounters();
 
 }

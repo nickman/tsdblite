@@ -104,4 +104,16 @@ public abstract class Constants {
 	/** The default netty child channel logging level */
 	public static final String DEFAULT_NETTY_CHILD_LOGLEVEL = LogLevel.INFO.name();
 	
+	/** The conf property name for the maximum inactivity period of a metric before expiry in ms. */
+	public static final String CONF_METRIC_EXPIRY = "metric.expiry";
+	/** The default maximum inactivity period of a metric before expiry in ms. */
+	public static final long DEFAULT_METRIC_EXPIRY = 60000 * 2; // 2 minutes
+	
+	/** The conf property name for the period between expiration runs in ms. */
+	public static final String CONF_METRIC_EXPIRY_PERIOD = "metric.expiry";
+	/** The default period between expiration runs in ms. */
+	public static final long DEFAULT_METRIC_EXPIRY_PERIOD = 10000; // 10 seconds
+	
+	
+	
 }

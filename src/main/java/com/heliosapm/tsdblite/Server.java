@@ -15,6 +15,20 @@
  */
 package com.heliosapm.tsdblite;
 
+import java.nio.channels.spi.SelectorProvider;
+import java.util.concurrent.ExecutorService;
+
+import javax.management.ObjectName;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.heliosapm.tsdblite.handlers.ProtocolSwitch;
+import com.heliosapm.tsdblite.jmx.ManagedDefaultExecutorServiceFactory;
+import com.heliosapm.tsdblite.metric.MetricCache;
+import com.heliosapm.utils.config.ConfigurationHelper;
+import com.heliosapm.utils.jmx.JMXHelper;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -32,20 +46,7 @@ import io.netty.util.concurrent.DefaultEventExecutor;
 import io.netty.util.concurrent.DefaultExecutorServiceFactory;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-import io.netty.util.internal.chmv8.ForkJoinPool;
-
-import java.nio.channels.spi.SelectorProvider;
-
-import javax.management.ObjectName;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.heliosapm.tsdblite.handlers.ProtocolSwitch;
-import com.heliosapm.tsdblite.jmx.ForkJoinPoolManager;
-import com.heliosapm.tsdblite.metric.MetricCache;
-import com.heliosapm.utils.config.ConfigurationHelper;
-import com.heliosapm.utils.jmx.JMXHelper;
+import jsr166e.LongAdder;
 
 /**
  * <p>Title: Server</p>
@@ -55,7 +56,7 @@ import com.heliosapm.utils.jmx.JMXHelper;
  * <p><code>com.heliosapm.tsdblite.Server</code></p>
  */
 
-public class Server extends ChannelInitializer<SocketChannel> {
+public class Server extends ChannelInitializer<SocketChannel> implements ServerMXBean {
 	/** The singleton instance */
 	private static volatile Server instance = null;
 	/** The singleton instance ctor lock */
@@ -70,11 +71,11 @@ public class Server extends ChannelInitializer<SocketChannel> {
 	/** The executor service factory to create thread pools */
 	protected final DefaultExecutorServiceFactory executorServiceFactory = new DefaultExecutorServiceFactory(getClass());
 	/** The netty boss thread pool */
-	protected final ForkJoinPool bossPool;
+	protected final ExecutorService bossPool;
 	/** The netty worker thread pool */
-	protected final ForkJoinPool workerPool;
+	protected final ExecutorService workerPool;
 	/** The netty channel group thread pool */
-	protected final ForkJoinPool channelGroupPool;
+	protected final ExecutorService channelGroupPool;
 	
 	/** The netty boss event loop */
 	 protected final EventLoopGroup bossGroup;
@@ -94,6 +95,9 @@ public class Server extends ChannelInitializer<SocketChannel> {
 	 
 	 /** The server channel logging handler */
 	protected final LoggingHandler loggingHandler;
+	
+	/** A counter of created channels */
+	protected final LongAdder createdChannels = new LongAdder();
 	 
 	 /** The boss pool JMX ObjectName */
 	public static final ObjectName BOSS_POOL_ON = JMXHelper.objectName(Server.class.getPackage().getName() + ":service=ForkJoinPool,name=BossPool");
@@ -131,12 +135,12 @@ public class Server extends ChannelInitializer<SocketChannel> {
 		int bossThreads = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_NETTY_BOSS_THREADS, Constants.DEFAULT_NETTY_BOSS_THREADS);
 		int workerThreads = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_NETTY_WORKER_THREADS, Constants.DEFAULT_NETTY_WORKER_THREADS);
 		int groupThreads = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_NETTY_CGROUP_THREADS, Constants.DEFAULT_NETTY_CGROUP_THREADS);
-		bossPool = (ForkJoinPool)executorServiceFactory.newExecutorService(bossThreads);
-		ForkJoinPoolManager.register(bossPool, BOSS_POOL_ON);
-		workerPool = (ForkJoinPool)executorServiceFactory.newExecutorService(workerThreads);
-		ForkJoinPoolManager.register(workerPool, WORKER_POOL_ON);
-		channelGroupPool = (ForkJoinPool)executorServiceFactory.newExecutorService(groupThreads);
-		ForkJoinPoolManager.register(channelGroupPool, CGROUP_POOL_ON);
+		bossPool = new ManagedDefaultExecutorServiceFactory("bossPool").newExecutorService(bossThreads);
+//		ForkJoinPoolManager.register(bossPool, BOSS_POOL_ON);
+		workerPool = new ManagedDefaultExecutorServiceFactory("workerPool").newExecutorService(workerThreads);
+//		ForkJoinPoolManager.register(workerPool, WORKER_POOL_ON);
+		channelGroupPool = new ManagedDefaultExecutorServiceFactory("groupPool").newExecutorService(groupThreads);
+//		ForkJoinPoolManager.register(channelGroupPool, CGROUP_POOL_ON);
 		bossGroup = new NioEventLoopGroup(bossThreads, bossPool, selectorProvider);
 		workerGroup = new NioEventLoopGroup(bossThreads, workerPool, selectorProvider);
 		bootStrap = new ServerBootstrap();
@@ -155,6 +159,7 @@ public class Server extends ChannelInitializer<SocketChannel> {
 			log.error("Failed to bind Netty server on [{}:{}]", iface, port, ex);
 			throw new RuntimeException("Failed to bind Netty server", ex);
 		}
+		JMXHelper.registerMBean(this, OBJECT_NAME);
 		log.info("\n\t======================================\n\tNetty Server started on [{}:{}]\n\t======================================", iface, port);
 	}
 	
@@ -179,7 +184,8 @@ public class Server extends ChannelInitializer<SocketChannel> {
 	 * @see io.netty.channel.ChannelInitializer#initChannel(io.netty.channel.Channel)
 	 */
 	@Override
-	protected void initChannel(final SocketChannel ch) throws Exception {		
+	protected void initChannel(final SocketChannel ch) throws Exception {
+		createdChannels.increment();
 		channelGroup.add(ch);		
 		ch.closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
 			@Override
@@ -189,18 +195,69 @@ public class Server extends ChannelInitializer<SocketChannel> {
 //				if(future.cause()!=null) {
 //					log.error("Close fail", future.cause());					
 //				}
-			};
+			}
 		});
 		ch.pipeline().addLast("IdleState", new IdleStateHandler(0, 0, 60));
 		ch.pipeline().addLast("ProtocolSwitch", new ProtocolSwitch());
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see io.netty.channel.ChannelHandlerAdapter#userEventTriggered(io.netty.channel.ChannelHandlerContext, java.lang.Object)
+	 */
 	@Override
 	public void userEventTriggered(final ChannelHandlerContext ctx, final Object evt) throws Exception {
 		if (evt instanceof IdleStateEvent) {
 			log.info("\n\t ****************** Idle Event on Channel [{}]", ctx.channel().id().asShortText());
 		}
 		super.userEventTriggered(ctx, evt);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.heliosapm.tsdblite.ServerMXBean#getCreatedChannels()
+	 */
+	@Override
+	public long getCreatedChannels() {
+		return createdChannels.longValue();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.heliosapm.tsdblite.ServerMXBean#getCurrentChannels()
+	 */
+	@Override
+	public int getCurrentChannels() {
+		return channelGroup.size();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.heliosapm.tsdblite.ServerMXBean#getSelector()
+	 */
+	@Override
+	public String getSelector() {
+		return selectorProvider.getClass().getName();
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.heliosapm.tsdblite.ServerMXBean#getPort()
+	 */
+	@Override
+	public int getPort() {
+		return port;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.heliosapm.tsdblite.ServerMXBean#getIface()
+	 */
+	@Override
+	public String getIface() {
+		return iface;
 	}
 
 }

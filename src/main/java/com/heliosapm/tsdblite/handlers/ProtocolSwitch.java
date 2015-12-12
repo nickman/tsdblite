@@ -15,6 +15,21 @@
  */
 package com.heliosapm.tsdblite.handlers;
 
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+
+import javax.management.ObjectName;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.heliosapm.tsdblite.Constants;
+import com.heliosapm.tsdblite.Server;
+import com.heliosapm.tsdblite.jmx.ManagedDefaultExecutorServiceFactory;
+import com.heliosapm.tsdblite.jmx.ManagedForkJoinPool;
+import com.heliosapm.utils.config.ConfigurationHelper;
+import com.heliosapm.utils.jmx.JMXHelper;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -32,20 +47,6 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultExecutorServiceFactory;
-import io.netty.util.internal.chmv8.ForkJoinPool;
-
-import java.util.List;
-
-import javax.management.ObjectName;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.heliosapm.tsdblite.Constants;
-import com.heliosapm.tsdblite.Server;
-import com.heliosapm.tsdblite.jmx.ManagedForkJoinPool;
-import com.heliosapm.utils.config.ConfigurationHelper;
-import com.heliosapm.utils.jmx.JMXHelper;
 
 /**
  * <p>Title: ProtocolSwitch</p>
@@ -66,7 +67,7 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
 	/** Executor service factory */
 	protected static final DefaultExecutorServiceFactory executorServiceFactory = new DefaultExecutorServiceFactory(ProtocolSwitch.class);
 	/** The netty channel group thread pool */
-	protected static final ForkJoinPool eventPool;
+	protected static final ExecutorService eventPool;
 	/** The event executor */
 	protected static final DefaultEventExecutorGroup eventExecutorGroup; 
 
@@ -84,9 +85,9 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
     
 	static {
 		final int eventThreads = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_NETTY_EVENT_THREADS, Constants.DEFAULT_NETTY_EVENT_THREADS);
-		eventPool = (ForkJoinPool)executorServiceFactory.newExecutorService(eventThreads);
+		eventPool = new ManagedDefaultExecutorServiceFactory("eventPool").newExecutorService(eventThreads);
 		eventExecutorGroup = new DefaultEventExecutorGroup(eventThreads, eventPool);
-		ManagedForkJoinPool.register(eventPool, EVENT_POOL_ON);		
+//		ManagedForkJoinPool.register(eventPool, EVENT_POOL_ON);		
 	}
 
 

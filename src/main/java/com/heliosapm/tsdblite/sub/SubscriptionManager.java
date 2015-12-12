@@ -18,6 +18,11 @@ under the License.
  */
 package com.heliosapm.tsdblite.sub;
 
+import javax.management.ObjectName;
+
+import com.heliosapm.tsdblite.metric.MetricCache;
+import com.heliosapm.utils.jmx.notifcations.ProxySubscriptionService;
+
 /**
  * <p>Title: SubscriptionManager</p>
  * <p>Description: </p> 
@@ -27,12 +32,51 @@ package com.heliosapm.tsdblite.sub;
  */
 
 public class SubscriptionManager {
-
+	/** The singleton instance */
+	private static volatile SubscriptionManager instance = null;
+	/** The singleton instance ctor lock */
+	private static final Object lock = new Object();
+	
+	/**
+	 * Acquires and returns the SubscriptionManager singleton
+	 * @return the SubscriptionManager singleton
+	 */
+	public static SubscriptionManager getInstance() {
+		if(instance==null) {
+			synchronized(lock) {
+				if(instance==null) {
+					instance = new SubscriptionManager();
+				}
+			}
+		}
+		return instance;
+	}
+	
+	
+	
+	private final ProxySubscriptionService proxySubService; 
+	
+	
 	/**
 	 * Creates a new SubscriptionManager
 	 */
-	public SubscriptionManager() {
-		// TODO Auto-generated constructor stub
+	private SubscriptionManager() {		
+		proxySubService = new ProxySubscriptionService(MetricCache.getInstance().getMetricMBeanServerInstance(), null);
 	}
 
+	public ProxySubscriptionService getProxySub() {
+		return proxySubService;
+	}
+	
+	/**
+	 * Acquires the Subscription for the passed pattern and subscription type
+	 * @param pattern The subscription pattern
+	 * @param subType the subscription type
+	 * @return the Subscription
+	 */
+	public Subscription get(final ObjectName pattern, final SubscriptionEvent subType) {
+		return Subscription.get(pattern, subType, proxySubService);
+	}
+
+	
 }

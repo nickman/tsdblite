@@ -229,7 +229,12 @@ public class ManagedForkJoinPool extends ForkJoinPool implements ManagedForkJoin
 		return forkJoinTasks.longValue();
 	}
 	
-	
+	@Override
+	public void resetCounters() {
+		forkJoinTasks.reset();
+		runnableTasks.reset();
+		callableTasks.reset();		
+	}
 
 	
 }
