@@ -31,14 +31,21 @@ import io.netty.util.concurrent.ExecutorServiceFactory;
  */
 
 public class ManagedDefaultExecutorServiceFactory implements ExecutorServiceFactory {
-
+	/** The name prefix of the ExecutorServiceFactory to be created by this factory */
+	final String name;
+	
 	/**
 	 * Creates a new ManagedDefaultExecutorServiceFactory
+	 * @param name The name prefix of the ExecutorServiceFactory to be created by this factory
 	 */
-	public ManagedDefaultExecutorServiceFactory() {
-		// TODO Auto-generated constructor stub
+	public ManagedDefaultExecutorServiceFactory(final String name) {
+		this.name = name;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see io.netty.util.concurrent.ExecutorServiceFactory#newExecutorService(int)
+	 */
 	@Override
 	public ExecutorService newExecutorService(final int parallelism) {
 		// TODO Auto-generated method stub
