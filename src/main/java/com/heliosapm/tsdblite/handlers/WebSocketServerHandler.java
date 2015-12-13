@@ -59,7 +59,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
 		super(true);
 	}
 
-    private static final String WEBSOCKET_PATH = "/websocket";
+    private static final String WEBSOCKET_PATH = "/ws";
 
     private WebSocketServerHandshaker handshaker;
 
@@ -103,6 +103,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
             WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
         } else {
             handshaker.handshake(ctx.channel(), req);
+            ctx.writeAndFlush(new TextWebSocketFrame("{'session'='" + ctx.channel().id().asShortText() + "'}"));
         }
     }
 
