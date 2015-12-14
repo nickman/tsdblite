@@ -15,6 +15,7 @@
  */
 package com.heliosapm.tsdblite;
 
+import java.io.File;
 import java.lang.management.ManagementFactory;
 
 import io.netty.handler.logging.LogLevel;
@@ -113,6 +114,32 @@ public abstract class Constants {
 	public static final String CONF_METRIC_EXPIRY_PERIOD = "metric.expiry";
 	/** The default period between expiration runs in ms. */
 	public static final long DEFAULT_METRIC_EXPIRY_PERIOD = 10000; // 10 seconds
+	
+	// =====================================================================================================
+	// The static content server configs
+	// =====================================================================================================
+	
+	/** The conf property name for the cache period for static content in seconds */
+	public static final String CONF_HTTP_CACHE_SECONDS = "http.static.cacheperiod";
+	/** The default cache period for static content in seconds */
+	public static final int DEFAULT_HTTP_CACHE_SECONDS = 60;
+	
+	/** The conf property name for the http static content server allowed file names regex */
+	public static final String CONF_HTTP_ALLOWED_FILENAMES = "http.regex.allowed";
+	/** The default http static content server allowed file names regex */
+	public static final String DEFAULT_HTTP_ALLOWED_FILENAMES = "[A-Za-z0-9][-_A-Za-z0-9\\.]*"; 
+	
+	/** The conf property name for the http static content server insecure file names regex */
+	public static final String CONF_HTTP_INSECURE_FILENAMES = "http.regex.insecure";
+	/** The default http static content server insecure file names regex */
+	public static final String DEFAULT_HTTP_INSECURE_FILENAMES = ".*[<>&\"].*";
+	
+	/** The conf property name for the directory where packaged content should be served from */
+	public static final String CONF_HTTP_CONTENT_ROOT = "http.staticroot";
+	/** The default directory where packaged content should be served from */
+	public static final String DEFAULT_HTTP_CONTENT_ROOT = System.getProperty("user.home") + File.separator + ".tsdblite" + File.separator + "www";
+	
+	
 	
 	
 	

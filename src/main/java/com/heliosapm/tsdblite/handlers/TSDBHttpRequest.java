@@ -15,10 +15,18 @@
  */
 package com.heliosapm.tsdblite.handlers;
 
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import com.google.common.net.HttpHeaders;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
@@ -29,13 +37,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import com.google.common.net.HttpHeaders;
-
 /**
  * <p>Title: TSDBHttpRequest</p>
  * <p>Description: Wraps up a channel and the http request it is carrying</p> 
@@ -44,7 +45,7 @@ import com.google.common.net.HttpHeaders;
  * <p><code>com.heliosapm.tsdblite.handlers.TSDBHttpRequest</code></p>
  */
 
-public class TSDBHttpRequest {
+public class TSDBHttpRequest  {
 	/** The incoming HTTP request */
 	protected final HttpRequest request;
 	/** The channel the request came in on */
@@ -82,11 +83,14 @@ public class TSDBHttpRequest {
 		this.ctx = ctx;
 		final QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
 		path = decoder.path();
-		final StringBuilder b = new StringBuilder();
+		final StringBuilder b = new StringBuilder("/api/");
 		pathElements = PATH_SPLIT.split(path);
 		for(String part: pathElements) {
-			if(part==null || part.trim().isEmpty()) continue;
-			b.append("/").append(part);
+			if(part==null || part.trim().isEmpty() || "api".equals(part)) {
+				continue;
+			}
+			b.append(part);
+			break;
 		}
 		route = b.toString();		
 	}
@@ -195,12 +199,11 @@ public class TSDBHttpRequest {
 		final ByteBuf buf = join(msgs);
 		if(buf.readableBytes()==0) {
 			return new DefaultHttpResponse(HttpVersion.HTTP_1_1, status);
-		} else {
-			final DefaultFullHttpResponse resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, buf);
-			resp.headers().setInt(HttpHeaders.CONTENT_LENGTH, buf.readableBytes());
-			resp.headers().set(HttpHeaders.CONTENT_TYPE, "text/plain");
-			return resp;
 		}
+		final DefaultFullHttpResponse resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, buf);
+		resp.headers().setInt(HttpHeaders.CONTENT_LENGTH, buf.readableBytes());
+		resp.headers().set(HttpHeaders.CONTENT_TYPE, "text/plain");
+		return resp;
 	}
 	
 	private static ByteBuf join(final String...msgs) {
@@ -258,6 +261,14 @@ public class TSDBHttpRequest {
 		}
 		
 		return ctx.writeAndFlush(response);
+	}
+
+	/**
+	 * Returns the channel handler context
+	 * @return the channel handler context
+	 */
+	public ChannelHandlerContext context() {
+		return ctx;
 	}
 
 	

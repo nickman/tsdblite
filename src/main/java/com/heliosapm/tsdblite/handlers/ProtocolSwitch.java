@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import com.heliosapm.tsdblite.Constants;
 import com.heliosapm.tsdblite.Server;
 import com.heliosapm.tsdblite.jmx.ManagedDefaultExecutorServiceFactory;
-import com.heliosapm.tsdblite.jmx.ManagedForkJoinPool;
 import com.heliosapm.utils.config.ConfigurationHelper;
 import com.heliosapm.utils.jmx.JMXHelper;
 
@@ -42,6 +41,7 @@ import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -87,6 +87,7 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
 		final int eventThreads = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_NETTY_EVENT_THREADS, Constants.DEFAULT_NETTY_EVENT_THREADS);
 		eventPool = new ManagedDefaultExecutorServiceFactory("eventPool").newExecutorService(eventThreads);
 		eventExecutorGroup = new DefaultEventExecutorGroup(eventThreads, eventPool);
+		HttpStaticFileServerHandler.getInstance();
 //		ManagedForkJoinPool.register(eventPool, EVENT_POOL_ON);		
 	}
 
@@ -149,23 +150,27 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
         ChannelPipeline p = ctx.pipeline();    
 
         //p.addLast("logging", loggingHandler);
-        p.addLast(new HttpObjectAggregator(1048576));
-//        p.addLast("httpCodec", new HttpServerCodec());
-        p.addLast("encoder", new HttpResponseEncoder());
-        p.addLast("decoder", new HttpRequestDecoder());
+//        p.addLast(new HttpObjectAggregator(1048576));
+        final HttpServerCodec sourceCodec = new HttpServerCodec();
+        p.addLast("httpCodec", sourceCodec);
+//        HttpServerUpgradeHandler.UpgradeCodec upgradeCodec = new Http2ServerUpgradeCodec(new HelloWorldHttp2Handler());
+//        HttpServerUpgradeHandler upgradeHandler = new HttpServerUpgradeHandler(sourceCodec, Collections.singletonList(upgradeCodec), 65536);
+//        p.addLast("http2Upgrader", upgradeHandler);		          
         
-        
-        p.addLast("inflater", new HttpContentDecompressor());
+//        p.addLast("encoder", new HttpResponseEncoder());
+//        p.addLast("decoder", new HttpRequestDecoder());
+//        p.addLast("deflater", new HttpContentCompressor(1));
+//        p.addLast("inflater", new HttpContentDecompressor());
         p.addLast(new HttpObjectAggregator(1048576 * 2));
         
         //p.addLast("logging", loggingHandler);
         
         
         //p.addLast("encoder", new HttpResponseEncoder());
-        p.addLast("deflater", new HttpContentCompressor());
+        
         
         //p.addLast("logging", loggingHandler);
-//        p.addLast("logging", loggingHandler);
+        p.addLast("logging", loggingHandler);
         //WebSocketServerHandler
         p.addLast(eventExecutorGroup, "requestManager", new WebSocketServerHandler());
 //        p.addLast(eventExecutorGroup, "requestManager", HttpRequestManager.getInstance());
