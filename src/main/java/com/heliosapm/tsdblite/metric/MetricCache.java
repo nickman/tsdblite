@@ -300,13 +300,13 @@ public class MetricCache implements MetricCacheMXBean {
 					}
 					final long dispatchElapsed = System.currentTimeMillis() - now;
 					lastExpiryDispatchTime.set(dispatchElapsed);
-					log.info("Expiry Dispatch for [{}] Metrics Completed in [{}] ms.", metricObjectNames.length, dispatchElapsed);
+					log.debug("Expiry Dispatch for [{}] Metrics Completed in [{}] ms.", metricObjectNames.length, dispatchElapsed);
 					for(Future<?> f: taskFutures) {
 						try { f.get(); } catch (Exception x) {/* No Op */}
 					}
 					final long expiryElapsed = System.currentTimeMillis() - now;
 					lastExpiryTime.set(expiryElapsed);
-					log.info("Expiry Completed in [{}] ms.", expiryElapsed);
+					log.debug("Expiry Completed in [{}] ms.", expiryElapsed);
 				}
 			}
 		}, "MetricExpiryThread");

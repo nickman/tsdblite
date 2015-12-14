@@ -166,7 +166,9 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
         
         //p.addLast("logging", loggingHandler);
 //        p.addLast("logging", loggingHandler);
-        p.addLast(eventExecutorGroup, "requestManager", HttpRequestManager.getInstance());
+        //WebSocketServerHandler
+        p.addLast(eventExecutorGroup, "requestManager", new WebSocketServerHandler());
+//        p.addLast(eventExecutorGroup, "requestManager", HttpRequestManager.getInstance());
 //        p.addLast("requestManager", HttpRequestManager.getInstance());        
         p.remove(this);
     }
