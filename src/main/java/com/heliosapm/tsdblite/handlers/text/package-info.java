@@ -16,32 +16,12 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
  */
-package com.heliosapm.tsdblite.handlers;
-
 /**
- * <p>Title: MetricSubscribeHandler</p>
- * <p>Description: HTTP request handler to subscribe to metric data feeds</p> 
+ * <p>Title: package-info</p>
+ * <p>Description: Telnet/Plaintext Handlers</p> 
  * <p>Company: Helios Development Group LLC</p>
  * @author Whitehead (nwhitehead AT heliosdev DOT org)
- * <p><code>com.heliosapm.tsdblite.handlers.MetricSubscribeHandler</code></p>
+ * <p><code>com.heliosapm.tsdblite.handlers.text.package-info</code></p>
  */
 
-public class MetricSubscribeHandler extends HttpRequestHandler {
-
-	/**
-	 * Creates a new MetricSubscribeHandler
-	 */
-	public MetricSubscribeHandler() {
-		super();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see com.heliosapm.tsdblite.handlers.HttpRequestHandler#process(com.heliosapm.tsdblite.handlers.TSDBHttpRequest)
-	 */
-	@Override
-	protected void process(final TSDBHttpRequest request) {
-		//request.getRequest().
-	}
-
-}
+package com.heliosapm.tsdblite.handlers.text;

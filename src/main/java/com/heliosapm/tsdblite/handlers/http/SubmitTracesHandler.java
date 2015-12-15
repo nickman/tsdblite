@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.heliosapm.tsdblite.handlers;
+package com.heliosapm.tsdblite.handlers.http;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpRequest;
@@ -51,7 +51,7 @@ public class SubmitTracesHandler extends HttpRequestHandler {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.heliosapm.tsdblite.handlers.HttpRequestHandler#process(com.heliosapm.tsdblite.handlers.TSDBHttpRequest)
+	 * @see com.heliosapm.tsdblite.handlers.http.HttpRequestHandler#process(com.heliosapm.tsdblite.handlers.http.TSDBHttpRequest)
 	 */
 	@Override
 	protected void process(final TSDBHttpRequest request) {

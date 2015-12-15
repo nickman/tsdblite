@@ -22,7 +22,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org. 
  *
  */
-package com.heliosapm.tsdblite.handlers;
+package com.heliosapm.tsdblite.handlers.http;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CACHE_CONTROL;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
@@ -181,7 +181,7 @@ public class HttpStaticFileServerHandler extends HttpRequestHandler {
 
 	/**
 	 * {@inheritDoc}
-	 * @see com.heliosapm.tsdblite.handlers.HttpRequestHandler#process(com.heliosapm.tsdblite.handlers.TSDBHttpRequest)
+	 * @see com.heliosapm.tsdblite.handlers.http.HttpRequestHandler#process(com.heliosapm.tsdblite.handlers.http.TSDBHttpRequest)
 	 */
 	@Override
 	protected void process(final TSDBHttpRequest request) {

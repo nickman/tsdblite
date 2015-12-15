@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.heliosapm.tsdblite.handlers;
+package com.heliosapm.tsdblite.handlers.http;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -91,7 +91,7 @@ public class HttpRequestManager extends SimpleChannelInboundHandler<HttpRequest>
 	 * @see io.netty.channel.SimpleChannelInboundHandler#messageReceived(io.netty.channel.ChannelHandlerContext, java.lang.Object)
 	 */
 	@Override
-	protected void messageReceived(final ChannelHandlerContext ctx, final HttpRequest msg) throws Exception {
+	public void messageReceived(final ChannelHandlerContext ctx, final HttpRequest msg) throws Exception {
 		try {
 			if(msg.uri().endsWith("/favicon.ico")) {
 				final DefaultFullHttpResponse resp = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, favicon);

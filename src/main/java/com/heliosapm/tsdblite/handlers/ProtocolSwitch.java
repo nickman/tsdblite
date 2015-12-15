@@ -25,6 +25,10 @@ import org.slf4j.LoggerFactory;
 
 import com.heliosapm.tsdblite.Constants;
 import com.heliosapm.tsdblite.Server;
+import com.heliosapm.tsdblite.handlers.http.HttpStaticFileServerHandler;
+import com.heliosapm.tsdblite.handlers.text.StringArrayTraceDecoder;
+import com.heliosapm.tsdblite.handlers.text.WordSplitter;
+import com.heliosapm.tsdblite.handlers.websock.WebSocketServerHandler;
 import com.heliosapm.tsdblite.jmx.ManagedDefaultExecutorServiceFactory;
 import com.heliosapm.utils.config.ConfigurationHelper;
 import com.heliosapm.utils.jmx.JMXHelper;

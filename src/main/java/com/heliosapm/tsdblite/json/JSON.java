@@ -17,6 +17,8 @@ package com.heliosapm.tsdblite.json;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -208,6 +210,46 @@ public class JSON {
 			if(isr!=null) try { isr.close(); } catch (Exception x) {/* No Op */}
 		}
 	}
+	
+	
+	/**
+	 * Deserializes a JSON formatted ByteBuf to a JsonNode
+	 * @param json The buffer to deserialize from
+	 * @param charset The optional character set of the content type in the buffer which defaults to UTF8
+	 * @return The parsed JsonNode
+	 * @throws IllegalArgumentException if buffer was null
+	 * @throws JSONException if the data could not be parsed
+	 */
+	public static final JsonNode parseToNode(final ByteBuf json, final Charset charset) {
+		if (json == null)
+			throw new IllegalArgumentException("Incoming buffer was null");
+		InputStream is = new ByteBufInputStream(json);
+		InputStreamReader isr = new InputStreamReader(is, charset==null ? UTF8 : charset);
+		try {
+			return jsonMapper.readTree(is);
+		} catch (JsonParseException e) {
+			throw new IllegalArgumentException(e);
+		} catch (JsonMappingException e) {
+			throw new IllegalArgumentException(e);
+		} catch (IOException e) {
+			throw new JSONException(e);
+		} finally {
+			if(is!=null) try { is.close(); } catch (Exception x) {/* No Op */}
+			if(isr!=null) try { isr.close(); } catch (Exception x) {/* No Op */}
+		}
+	}
+
+	/**
+	 * Deserializes a JSON formatted ByteBuf to a JsonNode
+	 * @param json The buffer to deserialize from which is assumed to be UTF8
+	 * @return The parsed JsonNode
+	 * @throws IllegalArgumentException if buffer was null
+	 * @throws JSONException if the data could not be parsed
+	 */
+	public static final JsonNode parseToNode(final ByteBuf json) {
+		return parseToNode(json, UTF8);
+	}
+	
 	
 	
 	/**
@@ -481,6 +523,38 @@ public class JSON {
 		} catch (Exception ex) {
 			throw new JSONException(ex);
 		}
+	}
+	
+	
+	/**
+	 * Serializes the passed object as JSON into the passed buffer
+	 * @param obj The object to serialize
+	 * @param buf The buffer to serialize into. If null, a new buffer is created
+	 * @return The buffer the object was written to
+	 */
+	public static ByteBuf serializeToBuf(final Object obj, final ByteBuf buf) {
+		if(obj==null) throw new IllegalArgumentException("The passed object was null");
+		final ByteBuf b = buf==null ? Unpooled.directBuffer(2048) : buf;
+		OutputStream os = null;
+		try {
+			os = new ByteBufOutputStream(b);
+			serialize(obj, os);
+			os.flush();
+			return b;
+		} catch (Exception ex) {
+			throw new RuntimeException("Failed to bufferize serialized object", ex);
+		} finally {
+			if(os!=null) try { os.close(); } catch (Exception x) {/* No Op */}
+		}
+	}
+	
+	/**
+	 * Serializes the passed object as JSON into a newly created buffer
+	 * @param obj The object to serialize
+	 * @return The buffer the object was written to
+	 */
+	public static ByteBuf serializeToBuf(final Object obj) {
+		return serializeToBuf(obj, null);
 	}
 	
 	

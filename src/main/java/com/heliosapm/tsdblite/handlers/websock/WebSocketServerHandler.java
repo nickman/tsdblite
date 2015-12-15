@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.heliosapm.tsdblite.handlers;
+package com.heliosapm.tsdblite.handlers.websock;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.HOST;
 import static io.netty.handler.codec.http.HttpMethod.GET;
@@ -40,6 +40,18 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
+import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.heliosapm.tsdblite.handlers.http.HttpRequestManager;
+import com.heliosapm.tsdblite.json.JSON;
+import com.heliosapm.utils.collections.FluentMap;
+import com.heliosapm.utils.collections.FluentMap.MapType;
 
 /**
  * <p>Title: WebSocketServerHandler</p>
@@ -50,12 +62,14 @@ import io.netty.util.CharsetUtil;
  */
 
 public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> {
-
+	/** A map of websock handlers keyed by the op code */
+	protected final Map<String, WebSocketRequestHandler> handlers = new ConcurrentHashMapV8<String, WebSocketRequestHandler>();
 	/**
 	 * Creates a new WebSocketServerHandler
 	 */
 	public WebSocketServerHandler() {
 		super(true);
+		handlers.putAll(SubscriptionRequestHandlers.registerAll());
 	}
 
     private static final String WEBSOCKET_PATH = "/ws";
@@ -114,7 +128,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
         }
     }
 
-    private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
+    private void handleWebSocketFrame(final ChannelHandlerContext ctx, final WebSocketFrame frame) {
 
         // Check for closing frame
         if (frame instanceof CloseWebSocketFrame) {
@@ -125,15 +139,59 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
             ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
             return;
         }
-        if (!(frame instanceof TextWebSocketFrame)) {
-            throw new UnsupportedOperationException(String.format("%s frame types not supported", frame.getClass()
-                    .getName()));
+        final JsonNode node = JSON.parseToNode(frame.content());
+        long rid = -1;
+        String session = "";
+        String op = null;
+        try {
+        	rid = node.get("rid").asLong();
+        } catch (Exception ex) { /* No Op */ }
+        try {
+        	session = node.get("session").asText();
+        } catch (Exception ex) { /* No Op */ }
+        try {
+        	op = node.get("op").asText();
+        } catch (Exception ex) { /* No Op */ }
+        
+        if(op==null) {
+        	sendWebSockError(ctx, rid, session, "Request had no op code", null);
+        	return;
         }
+        final WebSocketRequestHandler handler = handlers.get(op.toLowerCase().trim());
+        if(handler==null) {
+        	sendWebSockError(ctx, rid, session, "Unrecognized op code: [" + op + "]", null);        	
+        }
+        try {
+        	handler.processRequest(new WebSocketRequest(ctx, ctx.channel(), node));
+        } catch (Exception ex) {
+        	sendWebSockError(ctx, rid, session, "Failed to process WebSock Request: [" + op + "]", ex);
+        }
+        return;
+    }
+    
+    private static void sendWebSockError(final ChannelHandlerContext ctx, final Number rid, final String session, final String error, final Throwable t) {
+    	final String ts;
+    	if(t != null) {
+    		final StringWriter sw = new StringWriter();
+    		final PrintWriter pw = new PrintWriter(sw, true);
+    		sw.flush();
+    		t.printStackTrace(pw);
+    		ts = sw.toString();
+    	} else {
+    		ts = null;
+    	}
 
-        // Send the uppercase string back.
-        String request = ((TextWebSocketFrame) frame).text();
-        System.err.printf("%s received %s%n", ctx.channel(), request);
-        ctx.channel().write(new TextWebSocketFrame(request.toUpperCase()));
+  		ctx.writeAndFlush(new TextWebSocketFrame(
+  	  		JSON.serializeToBuf(
+  	  				FluentMap.newMap(MapType.LINK, String.class, Object.class)
+  	      		.fput("error", error)	
+  	      		.fput("rid", rid)
+  	      		.sfput("session", session)
+  	      		.sfput("trace", ts)
+  	      		.asMap(LinkedHashMap.class)    				
+  	  		)  				
+  		));
+    	
     }
 
     private static void sendHttpResponse(
