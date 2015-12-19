@@ -29,8 +29,6 @@ import java.util.Set;
 
 import javax.management.ObjectName;
 
-import com.heliosapm.tsdblite.metric.MetricCache.MetricMBean;
-
 /**
  * <p>Title: AppMetricMXBean</p>
  * <p>Description: JMX MXBean interface for {@link AppMetric} instances</p> 
@@ -105,5 +103,9 @@ public interface AppMetricMXBean {
 	 */
 	public long getMetricHashCode();
 	
-
+	/**
+	 * Returns the timestamp of the last activity in this MBean as a long UTC 
+	 * @return the timestamp of the last activity in this MBean as a long UTC
+	 */
+	public long getLastActivity();
 }

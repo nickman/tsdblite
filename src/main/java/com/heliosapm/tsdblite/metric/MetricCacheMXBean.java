@@ -88,4 +88,10 @@ public interface MetricCacheMXBean {
 	 */
 	public long getExpiry();
 	
+	/**
+	 * Returns the number of meta ObjectNames
+	 * @return the number of meta ObjectNames
+	 */
+	public int getMetasCount();
+	
 }

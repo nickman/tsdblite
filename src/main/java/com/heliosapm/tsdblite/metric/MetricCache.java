@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.management.AttributeList;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.Query;
@@ -35,6 +34,9 @@ import javax.management.QueryExp;
 import javax.management.StringValueExp;
 import javax.management.remote.JMXServiceURL;
 
+import jsr166e.LongAdder;
+
+import org.cliffc.high_scale_lib.NonBlockingHashMap;
 import org.cliffc.high_scale_lib.NonBlockingHashMapLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +54,6 @@ import com.heliosapm.utils.config.ConfigurationHelper;
 import com.heliosapm.utils.jmx.JMXHelper;
 import com.heliosapm.utils.time.SystemClock;
 import com.heliosapm.utils.tuples.NVP;
-
-import jsr166e.LongAdder;
 
 /**
  * <p>Title: MetricCache</p>
@@ -88,6 +88,9 @@ public class MetricCache implements MetricCacheMXBean {
 	/** The last expiry completion elapsed time in ms */
 	private final AtomicLong lastExpiryTime = new AtomicLong();
 	
+	/** Registered metas */
+	private final NonBlockingHashMapLong<MetricMeta> metas = new NonBlockingHashMapLong<MetricMeta>(1024, false); 
+	
 	
 	/** The expiry period on which expired metrics are scanned for in ms. */
 	final long expiryPeriod;
@@ -105,8 +108,6 @@ public class MetricCache implements MetricCacheMXBean {
 	/** The JMX query to find all registered instances of {@link com.heliosapm.tsdblite.metric.AppMetricMXBean} */
 	private final QueryExp metricBeanQuery = Query.isInstanceOf(new StringValueExp("com.heliosapm.tsdblite.metric.AppMetricMXBean"));
 	
-	/** Placeholder metric */
-	public final Metric PLACEHOLDER = new Metric();
 	/** An empty tag map const */
 	public static final SortedMap<String, String> EMPTY_TAG_MAP = Collections.unmodifiableSortedMap(new TreeMap<String, String>());
 	
@@ -246,7 +247,10 @@ public class MetricCache implements MetricCacheMXBean {
 			AppMetric appMetric = metricCache.putIfAbsent(hashCode, AppMetric.PLACEHOLDER);
 			if(appMetric==null || appMetric==AppMetric.PLACEHOLDER) {			
 				appMetric = new AppMetric(new Metric(node, hashCode));
-				metricCache.replace(hashCode, appMetric);			
+				metricCache.replace(hashCode, appMetric);
+				final ObjectName on = appMetric.getMetricInstance().toHostObjectName();
+				//FIXME:  make this config
+//				JMXHelper.registerMBean(metricMBeanServer, on, appMetric);
 				JMXHelper.registerMBean(metricMBeanServer, appMetric.getMetricInstance().toHostObjectName(), appMetric);
 			}
 			return appMetric.getMetricInstance();
@@ -276,19 +280,20 @@ public class MetricCache implements MetricCacheMXBean {
 			@Override
 			public void run() {
 				while(true) {
-					
 					SystemClock.sleep(expiryPeriod);
-					final long now = System.currentTimeMillis();
-					final ObjectName[] metricObjectNames = JMXHelper.query(JMXHelper.ALL_MBEANS_FILTER, metricBeanQuery);
+					final long startTime = System.currentTimeMillis();
+					final ObjectName[] metricObjectNames = JMXHelper.query(JMXHelper.ALL_MBEANS_FILTER, metricBeanQuery);					
 					final Collection<Future<?>> taskFutures = new ArrayList<Future<?>>(metricObjectNames.length);					
 					for(final ObjectName on : metricObjectNames) {
 						taskFutures.add(expiryService.submit(new Runnable(){
 							@Override
 							public void run() {
 								try {
+									final long now = System.currentTimeMillis();
 									final Map<String, Object> attrMap = JMXHelper.getAttributes(on, EXPIRY_ATTRIBUTES);
-									final long lastActivity = (Long)attrMap.get("LastSubmission");
-									if(now - lastActivity > expiry) {
+									final long lastActivity = (Long)attrMap.get("LastActivity");
+									final long age = now - lastActivity; 
+									if(age > expiry) {
 										metricMBeanServer.unregisterMBean(on);
 										expiredMetrics.increment();
 										final long hc = (Long)attrMap.get("MetricHashCode");
@@ -298,13 +303,13 @@ public class MetricCache implements MetricCacheMXBean {
 							}
 						}));
 					}
-					final long dispatchElapsed = System.currentTimeMillis() - now;
+					final long dispatchElapsed = System.currentTimeMillis() - startTime;
 					lastExpiryDispatchTime.set(dispatchElapsed);
 					log.debug("Expiry Dispatch for [{}] Metrics Completed in [{}] ms.", metricObjectNames.length, dispatchElapsed);
 					for(Future<?> f: taskFutures) {
 						try { f.get(); } catch (Exception x) {/* No Op */}
 					}
-					final long expiryElapsed = System.currentTimeMillis() - now;
+					final long expiryElapsed = System.currentTimeMillis() - startTime;
 					lastExpiryTime.set(expiryElapsed);
 					log.debug("Expiry Completed in [{}] ms.", expiryElapsed);
 				}
@@ -325,6 +330,31 @@ public class MetricCache implements MetricCacheMXBean {
 		if(trace!=null) {
 			final AppMetric appMetric = metricCache.get(trace.getHashCode());
 			appMetric.submit(trace);
+//			final Map<String, String> p = metaPairs.get(appMetric.getMetricHashCode());
+//			if(p!=null) {
+//				log.info("AppMetric matched Meta: {}", p);
+//			}
+		}
+	}
+	
+	
+	/**
+	 * Registers a new meta-source ObjectName
+	 * @param meta The meta ObjectName
+	 * @param name The meta key
+	 * @param value The meta value
+	 */
+	public void submit(final ObjectName meta, final String name, final String value) {
+		if(meta!=null) {
+			final long hashCode = hashCode(meta.getDomain(), meta.getKeyPropertyList());
+			MetricMeta m = metas.putIfAbsent(hashCode, MetricMeta.PLACEHOLDER);
+			if(m==null) {
+				m = new MetricMeta(hashCode, name, value);
+				JMXHelper.registerMBean(metricMBeanServer, meta, m);
+				metas.replace(hashCode, m);
+			} else {
+				m.addPair(name, value);
+			}
 		}
 	}
 	
@@ -350,227 +380,6 @@ public class MetricCache implements MetricCacheMXBean {
 	}
 	
 	
-	/**
-	 * <p>Title: MetricMBean</p>
-	 * <p>Description: JMX MBean interface for Metric instances</p> 
-	 * <p>Company: Helios Development Group LLC</p>
-	 * @author Whitehead (nwhitehead AT heliosdev DOT org)
-	 * <p><code>com.heliosapm.tsdblite.metric.MetricCache.MetricMBean</code></p>
-	 */
-	public interface MetricMBean {
-		/**
-		 * Returns the metric name
-		 * @return the metric name
-		 */
-		public String getMetricName();
-		
-		/**
-		 * Returns the metric tags
-		 * @return the metric tags
-		 */
-		public SortedMap<String, String> getTags();
-		
-		/**
-		 * Returns the metric tags
-		 * @return the metric tags
-		 */
-		public String getTagStr();
-		
-		
-		/**
-		 * Returns the metric hash 
-		 * @return the metric hash
-		 */
-		public long getHashCode();
-		
-	}
-	
-	/**
-	 * <p>Title: Metric</p>
-	 * <p>Description:Represents a unique metric name and set of tags </p> 
-	 * <p>Company: Helios Development Group LLC</p>
-	 * @author Whitehead (nwhitehead AT heliosdev DOT org)
-	 * <p><code>com.heliosapm.tsdblite.metric.MetricCache.Metric</code></p>
-	 */
-	public class Metric implements MetricMBean {
-		/** The metric name */
-		protected final String metricName;
-		/** The metric tags */
-		protected final SortedMap<String, String> tags;
-		/** The long hash code for this metric */
-		protected final long hashCode;
-		
-		
-		
-		private Metric() {
-			metricName = null;
-			tags = null;
-			hashCode = 0;
-		}
-		
-		/**
-		 * Creates a new Metric
-		 * @param metricName The metric name
-		 * @param tags The metric tags
-		 * @param hashCode The long hash code
-		 */
-		private Metric(final String metricName, final Map<String, String> tags, final long hashCode) {
-			if(metricName==null || metricName.trim().isEmpty()) throw new IllegalArgumentException("The passed metric name was null or empty");
-			this.metricName = metricName.trim();
-			if(tags==null || tags.isEmpty()) {
-				this.tags = EMPTY_TAG_MAP;
-			} else {
-				final TreeMap<String, String> tmp = new TreeMap<String, String>(TagKeySorter.INSTANCE);
-				for(Map.Entry<String, String> entry: tags.entrySet()) {
-					tmp.put(entry.getKey().trim(), entry.getValue().trim());
-				}		
-				this.tags = Collections.unmodifiableSortedMap(tmp);
-			}
-			this.hashCode = hashCode;
-		}
-		
-		/**
-		 * Creates a new Metric
-		 * @param node The JSON node
-		 * @param hashCode The long hash code
-		 */
-		private Metric(final JsonNode node, final long hashCode) {
-			metricName = node.get("metric").textValue();
-			final JsonNode tags = node.get("tags");
-			if(tags!=null) {
-				final TreeMap<String, String> tmp = new TreeMap<String, String>(TagKeySorter.INSTANCE);
-				for(final Iterator<String> keyIter = tags.fieldNames(); keyIter.hasNext();) {
-					final String key = keyIter.next();
-					tmp.put(key.trim(), tags.get(key).textValue().trim());
-				}
-				this.tags = Collections.unmodifiableSortedMap(tmp);
-			} else {
-				this.tags = EMPTY_TAG_MAP;
-			}
-			this.hashCode = hashCode;
-		}
-		
-		
-		/**
-		 * {@inheritDoc}
-		 * @see java.lang.Object#toString()
-		 */
-		@Override
-		public String toString() {
-			final StringBuilder b = new StringBuilder(metricName).append(":{");
-			if(!tags.isEmpty()) {
-				for(Map.Entry<String, String> entry: tags.entrySet()) {
-					b.append(entry.getKey()).append("=").append(entry.getValue()).append(",");
-				}
-				b.deleteCharAt(b.length()-1);			
-			}
-			return b.append("}").toString();
-		}
-		
-		/**
-		 * Renders the tags in a simple map format
-		 * @return the rendered map
-		 */
-		public String tagsToStr() {
-			final StringBuilder b = new StringBuilder();
-			for(Map.Entry<String, String> entry: tags.entrySet()) {
-				b.append(entry.getKey()).append("=").append(entry.getValue()).append(",");
-			}
-			return b.deleteCharAt(b.length()-1).toString();
-		}
-		
-		/**
-		 * Generates a JMX ObjectName for this metric
-		 * @return a JMX ObjectName
-		 */
-		public ObjectName toObjectName() {			
-			return JMXHelper.objectName(new StringBuilder(metricName)
-				.append(":").append(tagsToStr())
-			);
-		}
-		
-		public ObjectName toHostObjectName() {
-			final StringBuilder b = new StringBuilder("metrics.");
-			TreeMap<String, String> tgs = new TreeMap<String, String>(tags);
-			String h = tgs.remove("host");
-			String a = tgs.remove("app");
-			final String host = h==null ? "unknownhost" : h;
-			final int segIndex = metricName.indexOf('.');			
-			final String seg = segIndex==-1 ? metricName : metricName.substring(0, segIndex);
-			b.append(host).append(".").append(seg).append(":");
-			if(segIndex!=-1) {
-				tgs.put("app", metricName.substring(segIndex+1));
-			}
-			for(Map.Entry<String, String> entry: tgs.entrySet()) {
-				b.append(entry.getKey()).append("=").append(entry.getValue()).append(",");
-			}
-			b.deleteCharAt(b.length()-1);
-			return JMXHelper.objectName(b);
-		}
-		
-		/**
-		 * Returns the metric name
-		 * @return the metric name
-		 */
-		@Override
-		public String getMetricName() {
-			return metricName;
-		}
-		
-		/**
-		 * Returns the metric tags
-		 * @return the metric tags
-		 */
-		@Override
-		public SortedMap<String, String> getTags() {
-			return tags;
-		}
-		
-		@Override
-		public String getTagStr() {
-			return tagsToStr();
-		}
-		
-		/**
-		 * Returns the metric hash 
-		 * @return the metric hash
-		 */
-		@Override
-		public long getHashCode() {
-			return hashCode;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 * @see java.lang.Object#hashCode()
-		 */
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + (int) (hashCode ^ (hashCode >>> 32));
-			return result;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Metric other = (Metric) obj;
-			if (hashCode != other.hashCode)
-				return false;
-			return true;
-		}
-	}
-
 	/**
 	 * Returns the number of metrics in the metric cache
 	 * @return the metric cache size
@@ -605,6 +414,15 @@ public class MetricCache implements MetricCacheMXBean {
 	@Override
 	public int getMetricMBeanServerMBeanCount() {
 		return metricMBeanServer.getMBeanCount();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.heliosapm.tsdblite.metric.MetricCacheMXBean#getMetasCount()
+	 */
+	@Override
+	public int getMetasCount() {
+		return metas.size();
 	}
 	
 

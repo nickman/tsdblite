@@ -38,7 +38,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.heliosapm.tsdblite.Constants;
 import com.heliosapm.tsdblite.json.JSON;
-import com.heliosapm.tsdblite.metric.MetricCache.Metric;
 
 /**
  * <p>Title: Trace</p>

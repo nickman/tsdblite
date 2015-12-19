@@ -1,0 +1,908 @@
+{"Metric":"linux.mem.shmem","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.thp_zero_page_alloc_failed","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_min","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.disk.part.read_requests","Tags":{"dev":"sda2","host":"tpmint"},"Name":"desc","Value":"Total number of reads completed successfully."}
+{"Metric":"linux.mem.numa_other","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.indiscards","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.commitlimit","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.disk.part.write_requests","Tags":{"dev":"dm-1","host":"tpmint"},"Name":"desc","Value":"Total number of writes completed successfully."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"IWI"},"Name":"desc","Value":"IRQ work interrupts."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"TLB"},"Name":"desc","Value":"TLB (translation lookaside buffer) shootdowns."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_system","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.mem.nr_slab_unreclaimable","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgpg","Name":"unit","Value":"pages"}
+{"Metric":"linux.net.stat.tcp.sackfailures","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.backlogdrop","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.innoectpkts","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.incepkts","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.fs.space_used","Name":"unit","Value":"bytes"}
+{"Metric":"linux.mem.thp_zero_page_alloc","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.directcopyfrombacklog","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.renoreorder","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.hugepagesize","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.part.msec_write","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.disk.part.time_per_write","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.mem.numa_hint_faults_local","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.dsackignoredold","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.slab","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.nr_kernel_stack","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.lockdroppedicmps","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.md5notfound","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.batchsize_99","Name":"desc","Value":"Number of datapoints included in each batch."}
+{"Metric":"linux.disk.part.read_sectors","Tags":{"dev":"dm-1","host":"tpmint"},"Name":"desc","Value":"Total number of sectors read successfully."}
+{"Metric":"linux.net.stat.tcp.fackreorder","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_procstats_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.mem.pgscan_direct_dma32","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgfault","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgscan_kswapd_movable","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.nr_tlb_local_flush_all","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.inhdrerrors","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.hardwarecorrupted","Name":"unit","Value":"kbytes"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_volts","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.yum_update_stats_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"scollector.collect.post.bad_status","Name":"unit","Value":"per second"}
+{"Metric":"linux.mem.nr_writeback","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.block_size","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.part.ios_in_progress","Tags":{"dev":"sda2","host":"tpmint"},"Name":"desc","Value":"Number of actual I/O requests currently in flight."}
+{"Metric":"linux.intr","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.duration","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.renofailures","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.write_sectors","Tags":{"dev":"sda5","host":"tpmint"},"Name":"desc","Value":"Total number of sectors written successfully."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"CAL"},"Name":"desc","Value":"Funcation call interupts."}
+{"Metric":"linux.net.stat.icmp.outaddrmasks","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.read_merged","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.batchsize_min","Name":"desc","Value":"Number of datapoints included in each batch."}
+{"Metric":"linux.disk.part.time_per_write","Name":"rate","Value":"rate"}
+{"Metric":"linux.disk.fs.space_total","Tags":{"host":"tpmint","mount":"/"},"Name":"desc","Value":"The space_total property indicates in bytes how much total space is on the disk."}
+{"Metric":"os.disk.fs.space_free","Name":"unit","Value":"bytes"}
+{"Metric":"scollector.collect.post.batchsize_min","Name":"rate","Value":"gauge"}
+{"Metric":"os.net.ifspeed","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.numa_miss","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.thp_collapse_alloc_failed","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_temps","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"os.disk.fs.space_total","Tags":{"disk":"/","host":"tpmint"},"Name":"desc","Value":"The space_total property indicates in bytes how much total space is on the disk."}
+{"Metric":"linux.mem.nr_vmscan_immediate_reclaim","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.udp.indatagrams","Name":"rate","Value":"counter"}
+{"Metric":"os.disk.fs.space_total","Name":"unit","Value":"bytes"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"2","host":"tpmint","type":"irq"},"Name":"desc","Value":"Servicing interrupts."}
+{"Metric":"linux.entropy_avail","Name":"unit","Value":"entropy"}
+{"Metric":"linux.disk.fs.space_total","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.pgalloc_dma","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.twkilled","Name":"rate","Value":"counter"}
+{"Metric":"os.disk.fs.space_free","Tags":{"disk":"/","host":"tpmint"},"Name":"desc","Value":"The space_free property indicates in bytes how much free space is available on the disk."}
+{"Metric":"linux.disk.part.msec_weighted_total","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.interrupts","Name":"unit","Value":"interupts"}
+{"Metric":"os.system.uptime","Tags":{"host":"tpmint"},"Name":"desc","Value":"Seconds since last reboot."}
+{"Metric":"linux.disk.msec_write","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all writes."}
+{"Metric":"scollector.collect.post.count","Name":"desc","Value":"Counter of batches sent to the server."}
+{"Metric":"linux.loadavg_15_min","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.outofwindowicmps","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.inmcastoctets","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.outparmprobs","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.estabresets","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.outrsts","Name":"rate","Value":"counter"}
+{"Metric":"os.disk.fs.percent_free","Tags":{"disk":"/boot","host":"tpmint"},"Name":"desc","Value":"The percent_free property indicates what percentage of the disk is available."}
+{"Metric":"linux.cpu.clock","Tags":{"cpu":"2","host":"tpmint"},"Name":"desc","Value":"The current speed of the processor in MHz."}
+{"Metric":"linux.net.stat.tcp.timeouts","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.fastopenlistenoverflow","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.forwdatagrams","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.incsumerrors","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_count","Name":"unit","Value":""}
+{"Metric":"linux.disk.time_per_write","Name":"rate","Value":"rate"}
+{"Metric":"linux.mem.pgalloc_movable","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.compact_free_scanned","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.writebacktmp","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.disk.part.read_requests","Tags":{"dev":"sdb1","host":"tpmint"},"Name":"desc","Value":"Total number of reads completed successfully."}
+{"Metric":"linux.mem.htlb_buddy_alloc_success","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.read_sectors","Tags":{"dev":"sda2","host":"tpmint"},"Name":"desc","Value":"Total number of sectors read successfully."}
+{"Metric":"linux.disk.bytes","Tags":{"dev":"sda","host":"tpmint","type":"read"},"Name":"desc","Value":"Total number of bytes read to disk."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"2","host":"tpmint","type":"softirq"},"Name":"desc","Value":"Servicing soft irqs."}
+{"Metric":"linux.disk.fs.space_used","Tags":{"host":"tpmint","mount":"/boot"},"Name":"desc","Value":"The space_used property indicates in bytes how much space is used on the disk."}
+{"Metric":"linux.disk.write_requests","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_99","Name":"desc","Value":"How many milliseconds it took to send HTTP POST requests to the server."}
+{"Metric":"linux.disk.part.msec_weighted_total","Tags":{"dev":"sda2","host":"tpmint"},"Name":"desc","Value":"Measure of recent I/O completion time and backlog."}
+{"Metric":"linux.disk.write_merged","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":" Adjacent write requests merged in a single req."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"TLB"},"Name":"desc","Value":"TLB (translation lookaside buffer) shootdowns."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"TRM"},"Name":"desc","Value":"Thermal event interrupts."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_processors","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.net.stat.udp.sndbuferrors","Name":"rate","Value":"counter"}
+{"Metric":"os.mem.free","Name":"unit","Value":"bytes"}
+{"Metric":"linux.net.stat.ip.fragoks","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"3","host":"tpmint","type":"softirq"},"Name":"desc","Value":"Servicing soft irqs."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_storage_enclosure","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"PMI"},"Name":"desc","Value":"Performance monitoring interrupts."}
+{"Metric":"linux.net.stat.tcp.memorypressures","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_processors","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.mem.writebacktmp","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.prequeued","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.dsackofosent","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_median","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.disk.part.msec_read","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.disk.part.ios_in_progress","Tags":{"dev":"dm-1","host":"tpmint"},"Name":"desc","Value":"Number of actual I/O requests currently in flight."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"3","host":"tpmint","type":"iowait"},"Name":"desc","Value":"Waiting for I/O to complete."}
+{"Metric":"linux.mem.vmallocchunk","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.mem.vmallocchunk","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.alloc","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.numa_hit","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.synchallenge","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.inunknownprotos","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.udp.inerrors","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.bytes","Name":"rate","Value":"counter"}
+{"Metric":"os.mem.used","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.nr_bounce","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgsteal_kswapd_normal","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.msec_weighted_total","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":"Measure of recent I/O completion time and backlog."}
+{"Metric":"linux.mem.anonhugepages","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_dfstat_blocks_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.mem.pgscan_direct_movable","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"2","host":"tpmint","type":"nice"},"Name":"desc","Value":"Niced processes executing in user mode."}
+{"Metric":"linux.net.sockets.frag_in_use","Name":"unit","Value":"sockets"}
+{"Metric":"linux.net.stat.tcp.md5unexpected","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.batchsize_median","Name":"desc","Value":"Number of datapoints included in each batch."}
+{"Metric":"linux.net.stat.ip.innoroutes","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgrefill_movable","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"1","host":"tpmint","type":"steal"},"Name":"desc","Value":"Involuntary wait."}
+{"Metric":"linux.loadavg_1_min","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.ip.inmcastpkts","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.read_merged","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":"Adjacent read requests merged in a single req."}
+{"Metric":"linux.disk.time_per_write","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.mem.nr_unevictable","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.msec_read","Tags":{"dev":"sda5","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all reads."}
+{"Metric":"linux.mem.slabs_scanned","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.anonhugepages","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.disk.part.read_merged","Tags":{"dev":"sda2","host":"tpmint"},"Name":"desc","Value":"Adjacent read requests merged in a single req."}
+{"Metric":"linux.mem.compact_fail","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu","Tags":{"host":"tpmint","type":"system"},"Name":"desc","Value":"Processes executing in kernel mode."}
+{"Metric":"linux.entropy_avail","Tags":{"host":"tpmint"},"Name":"desc","Value":"The remaing amount of entropy available to the system. If it is low or hitting zero processes might be blocked waiting for extropy"}
+{"Metric":"linux.mem.bounce","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.mem.nr_dirty_background_threshold","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgsteal_direct_normal","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu","Tags":{"host":"tpmint","type":"guest"},"Name":"desc","Value":"Running a guest vm."}
+{"Metric":"linux.net.stat.icmp.outtimestampreps","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.kernelstack","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.part.read_requests","Tags":{"dev":"sda1","host":"tpmint"},"Name":"desc","Value":"Total number of reads completed successfully."}
+{"Metric":"linux.cpu","Name":"unit","Value":"CentiHertz"}
+{"Metric":"linux.disk.part.msec_weighted_total","Tags":{"dev":"dm-1","host":"tpmint"},"Name":"desc","Value":"Measure of recent I/O completion time and backlog."}
+{"Metric":"os.mem.used","Tags":{"host":"tpmint"},"Name":"desc","Value":"The amount of used memory. In Linux this excludes memory used by buffers and cache."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_memory","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.disk.part.read_merged","Tags":{"dev":"sdb1","host":"tpmint"},"Name":"desc","Value":"Adjacent read requests merged in a single req."}
+{"Metric":"linux.net.stat.tcp.fastopenpassivefail","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.msec_read","Tags":{"dev":"sdb1","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all reads."}
+{"Metric":"linux.net.stat.tcp.embryonicrsts","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.swaptotal","Name":"rate","Value":"gauge"}
+{"Metric":"os.mem.free","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.msec_weighted_total","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.queued","Name":"desc","Value":"Total number of items currently queued and waiting to be sent to the server."}
+{"Metric":"linux.disk.part.write_merged","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgscan_kswapd_dma","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.nr_tlb_remote_flush","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_avg","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.delayedacklocked","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.insrcquenchs","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"RES"},"Name":"desc","Value":"Rescheduling interrupts."}
+{"Metric":"scollector.collect.post.restore","Name":"desc","Value":"Counter of data points restored from batches that could not be sent to the server."}
+{"Metric":"os.mem.percent_free","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.nr_tlb_local_flush_one","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.nr_file_pages","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.gc.total_pause","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.bad_status","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.read_requests","Name":"rate","Value":"counter"}
+{"Metric":"scollector.version","Name":"desc","Value":"Scollector version number, which indicates when scollector was built."}
+{"Metric":"os.mem.percent_free","Tags":{"host":"tpmint"},"Name":"desc","Value":"Number, in bytes, of physical memory currently unused and available."}
+{"Metric":"linux.procs_blocked","Name":"unit","Value":"processes"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"2","host":"tpmint","type":"user"},"Name":"desc","Value":"Normal processes executing in user mode."}
+{"Metric":"linux.disk.part.msec_weighted_total","Tags":{"dev":"sda1","host":"tpmint"},"Name":"desc","Value":"Measure of recent I/O completion time and backlog."}
+{"Metric":"scollector.collect.alloc","Name":"desc","Value":"Total number of bytes allocated and still in use by the runtime (via runtime.ReadMemStats)."}
+{"Metric":"linux.cpu","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"3","host":"tpmint","type":"irq"},"Name":"desc","Value":"Servicing interrupts."}
+{"Metric":"linux.net.stat.tcp.sackrecoveryfail","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.fragfails","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.currestab","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgsteal_kswapd_movable","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_snmp_keepalived_vrrp_instances","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.cpu","Tags":{"host":"tpmint","type":"idle"},"Name":"desc","Value":"Twiddling thumbs."}
+{"Metric":"scollector.collect.post.batchsize_max","Name":"unit","Value":""}
+{"Metric":"linux.disk.part.msec_total","Tags":{"dev":"sda2","host":"tpmint"},"Name":"desc","Value":"Amount of time during which ios_in_progress >= 1."}
+{"Metric":"linux.net.sockets.tcp_in_use","Name":"unit","Value":"sockets"}
+{"Metric":"linux.net.stat.tcp.lossprobes","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.inredirects","Name":"rate","Value":"counter"}
+{"Metric":"os.mem.used","Name":"unit","Value":"bytes"}
+{"Metric":"scollector.hi","Name":"unit","Value":"ok"}
+{"Metric":"scollector.collect.gc.total_pause","Name":"desc","Value":"Total GC Pause time in milliseconds"}
+{"Metric":"scollector.collect.post.total_bytes","Name":"unit","Value":"bytes"}
+{"Metric":"linux.disk.block_size","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":"Sector size of the block device."}
+{"Metric":"linux.disk.part.read_merged","Tags":{"dev":"sda5","host":"tpmint"},"Name":"desc","Value":"Adjacent read requests merged in a single req."}
+{"Metric":"linux.disk.write_sectors","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":"Total number of sectors written successfully."}
+{"Metric":"linux.net.stat.tcp.dsackrecv","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.queued","Name":"unit","Value":"items"}
+{"Metric":"scollector.collect.post.total_bytes","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"MCP"},"Name":"desc","Value":"Machine Check polls."}
+{"Metric":"linux.net.bytes","Name":"unit","Value":"bytes"}
+{"Metric":"scollector.collect.post.bad_status","Name":"desc","Value":"Counter of HTTP POST requests where resp.StatusCode != http.StatusNoContent."}
+{"Metric":"linux.mem.nr_anon_transparent_hugepages","Name":"rate","Value":"counter"}
+{"Metric":"os.cpu.clock","Tags":{"cpu":"3","host":"tpmint"},"Name":"desc","Value":"The current speed of the processor in MHz."}
+{"Metric":"linux.net.sockets.raw_in_use","Name":"unit","Value":"sockets"}
+{"Metric":"linux.net.stat.tcp.sackmerged","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.udplite.rcvbuferrors","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_if_bond_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_meta_linux_ifaces","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"CAL"},"Name":"desc","Value":"Funcation call interupts."}
+{"Metric":"linux.net.stat.tcp.slowstartretrans","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.abortonclose","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_storage_vdisk","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.mem.swapcached","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.sackshiftfallback","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.block_size","Name":"unit","Value":"bytes"}
+{"Metric":"linux.disk.part.msec_weighted_total","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.read_merged","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":"Adjacent read requests merged in a single req."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"SPU"},"Name":"desc","Value":"Spurious interrupts."}
+{"Metric":"linux.net.stat.ip.outoctets","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.ip_count","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.dropped","Name":"unit","Value":"per second"}
+{"Metric":"linux.interrupts","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.prequeuedropped","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.defaultttl","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.read_merged","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgpg","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.numa_hint_faults","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.pureacks","Name":"rate","Value":"counter"}
+{"Metric":"os.net.bytes","Name":"unit","Value":"bytes"}
+{"Metric":"linux.net.stat.tcp.abortfailed","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.inechos","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.vmalloctotal","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.write_requests","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":"Total number of writes completed successfully."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"1","host":"tpmint","type":"user"},"Name":"desc","Value":"Normal processes executing in user mode."}
+{"Metric":"linux.loadavg_15_min","Name":"unit","Value":"load"}
+{"Metric":"linux.net.sockets.tcp_time_wait","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.kernelstack","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.mem.kswapd_low_wmark_hit_quickly","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"3","host":"tpmint","type":"user"},"Name":"desc","Value":"Normal processes executing in user mode."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"THR"},"Name":"desc","Value":"Threshold APIC interrupts."}
+{"Metric":"linux.mem.kswapd_inodesteal","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.maxconn","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.directmap2m","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.version","Name":"unit","Value":""}
+{"Metric":"linux.loadavg_runnable","Name":"rate","Value":"gauge"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"NMI"},"Name":"desc","Value":"Non-maskable interrupts."}
+{"Metric":"linux.mem.nfs_unstable","Name":"unit","Value":"kbytes"}
+{"Metric":"os.cpu","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"CAL"},"Name":"desc","Value":"Funcation call interupts."}
+{"Metric":"linux.ctxt","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.unevictable_pgs_rescued","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.total_duration","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.disk.part.write_merged","Tags":{"dev":"sdb1","host":"tpmint"},"Name":"desc","Value":" Adjacent write requests merged in a single req."}
+{"Metric":"linux.mem.thp_fault_fallback","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.pawsestab","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgsteal_direct_dma32","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_scollector_hi","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.disk.part.read_merged","Tags":{"dev":"sda1","host":"tpmint"},"Name":"desc","Value":"Adjacent read requests merged in a single req."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"0","host":"tpmint","type":"guest_nice"},"Name":"desc","Value":"Running a niced guest vm."}
+{"Metric":"linux.net.stat.tcp.hpacks","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_95","Name":"desc","Value":"How many milliseconds it took to send HTTP POST requests to the server."}
+{"Metric":"linux.disk.msec_write","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.sockets.tcp_in_use","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.prunecalled","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.write_sectors","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":"Total number of sectors written successfully."}
+{"Metric":"linux.mem.pgfree","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.msec_read","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all reads."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"LOC"},"Name":"desc","Value":"Local timer interrupts."}
+{"Metric":"linux.disk.msec_total","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":"Amount of time during which ios_in_progress >= 1."}
+{"Metric":"linux.mem.sunreclaim","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.thp_split","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Name":"unit","Value":"CentiHertz"}
+{"Metric":"linux.mem.swaptotal","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"TRM"},"Name":"desc","Value":"Thermal event interrupts."}
+{"Metric":"linux.net.stat.tcp.attemptfails","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.udp.outdatagrams","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.commitlimit","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.lossfailures","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.ofomerge","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.indelivers","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.gc.cpu_fraction","Name":"desc","Value":"fraction of CPU time used by GC"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_netbackup_frequency","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_redis","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.net.stat.icmpmsg.outtype3","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.packets","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_scollector_hi","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"scollector.collect.post.duration_max","Name":"desc","Value":"How many milliseconds it took to send HTTP POST requests to the server."}
+{"Metric":"linux.disk.msec_write","Name":"unit","Value":"milliseconds"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_netbackup_frequency","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.cpu.clock","Name":"rate","Value":"gauge"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"TRM"},"Name":"desc","Value":"Thermal event interrupts."}
+{"Metric":"scollector.collect.post.batchsize_median","Name":"unit","Value":""}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_netbackup_jobs","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.disk.part.write_merged","Tags":{"dev":"sda1","host":"tpmint"},"Name":"desc","Value":" Adjacent write requests merged in a single req."}
+{"Metric":"linux.mem.pgsteal_direct_movable","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.nr_tlb_remote_flush_received","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.renorecoveryfail","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.challengeack","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_if_team_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"os.cpu","Name":"unit","Value":"percent"}
+{"Metric":"os.cpu.clock","Name":"unit","Value":"MHz"}
+{"Metric":"linux.disk.time_per_read","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.net.stat.tcp.delayedacklost","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.outbcastoctets","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.inaddrmaskreps","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.nr_dirtied","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.msec_read","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"0","host":"tpmint","type":"user"},"Name":"desc","Value":"Normal processes executing in user mode."}
+{"Metric":"linux.net.stat.ip.outrequests","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.ifspeed","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.renorecovery","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.total_duration","Name":"desc","Value":"Total number of milliseconds it took to send an HTTP POST request to the server."}
+{"Metric":"linux.disk.part.write_merged","Tags":{"dev":"sda2","host":"tpmint"},"Name":"desc","Value":" Adjacent write requests merged in a single req."}
+{"Metric":"linux.net.stat.tcp.abortondata","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_if_bond_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.net.stat.tcp.lostretransmit","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.sockets.frag_mem","Name":"unit","Value":"bytes"}
+{"Metric":"linux.disk.msec_total","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":"Amount of time during which ios_in_progress >= 1."}
+{"Metric":"linux.disk.part.read_sectors","Tags":{"dev":"sda5","host":"tpmint"},"Name":"desc","Value":"Total number of sectors read successfully."}
+{"Metric":"linux.disk.part.write_sectors","Tags":{"dev":"sda1","host":"tpmint"},"Name":"desc","Value":"Total number of sectors written successfully."}
+{"Metric":"linux.net.stat.ip.reasmoks","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.gc.total_pause","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.disk.msec_total","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":"Amount of time during which ios_in_progress >= 1."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"3","host":"tpmint","type":"system"},"Name":"desc","Value":"Processes executing in kernel mode."}
+{"Metric":"linux.loadavg_runnable","Name":"unit","Value":"processes"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"CAL"},"Name":"desc","Value":"Funcation call interupts."}
+{"Metric":"linux.net.stat.ip.reasmtimeout","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.read_requests","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":"Total number of reads completed successfully."}
+{"Metric":"linux.cpu.clock","Tags":{"cpu":"1","host":"tpmint"},"Name":"desc","Value":"The current speed of the processor in MHz."}
+{"Metric":"linux.loadavg_5_min","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.write_merged","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.compact_isolated","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.spuriousrtos","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.collisions","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.msec_total","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.mem.htlb_buddy_alloc_fail","Name":"rate","Value":"counter"}
+{"Metric":"os.net.packets","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.numa_interleave","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.batchsize_avg","Name":"unit","Value":""}
+{"Metric":"linux.mem.pgsteal_direct_dma","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.forwarding","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_chassis","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.disk.write_requests","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":"Total number of writes completed successfully."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"LOC"},"Name":"desc","Value":"Local timer interrupts."}
+{"Metric":"linux.net.stat.tcp.lossproberecovery","Name":"rate","Value":"counter"}
+{"Metric":"linux.uptime_now","Name":"unit","Value":"seconds"}
+{"Metric":"linux.cpu.clock","Tags":{"cpu":"0","host":"tpmint"},"Name":"desc","Value":"The current speed of the processor in MHz."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"0","host":"tpmint","type":"softirq"},"Name":"desc","Value":"Servicing soft irqs."}
+{"Metric":"linux.disk.part.msec_write","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"MCE"},"Name":"desc","Value":"Machine check exceptions."}
+{"Metric":"linux.net.stat.ip.reasmfails","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.sent","Name":"unit","Value":"per second"}
+{"Metric":"linux.disk.part.msec_weighted_total","Tags":{"dev":"sda5","host":"tpmint"},"Name":"desc","Value":"Measure of recent I/O completion time and backlog."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"1","host":"tpmint","type":"irq"},"Name":"desc","Value":"Servicing interrupts."}
+{"Metric":"linux.net.stat.ip.intruncatedpkts","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.inmsgs","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.write_requests","Tags":{"dev":"sda1","host":"tpmint"},"Name":"desc","Value":"Total number of writes completed successfully."}
+{"Metric":"linux.mem.pgscan_kswapd_dma32","Name":"rate","Value":"counter"}
+{"Metric":"linux.entropy_avail","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_storage_controller","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"2","host":"tpmint","type":"iowait"},"Name":"desc","Value":"Waiting for I/O to complete."}
+{"Metric":"linux.mem.swapcached","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.mem.sreclaimable","Name":"rate","Value":"gauge"}
+{"Metric":"os.disk.fs.percent_free","Name":"unit","Value":"percent"}
+{"Metric":"linux.net.dropped","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgactivate","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"0","host":"tpmint","type":"steal"},"Name":"desc","Value":"Involuntary wait."}
+{"Metric":"scollector.collect.post.batchsize_max","Name":"desc","Value":"Number of datapoints included in each batch."}
+{"Metric":"linux.disk.read_sectors","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":"Total number of sectors read successfully."}
+{"Metric":"scollector.collector.duration","Name":"unit","Value":"seconds"}
+{"Metric":"linux.mem.mlocked","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.goroutines","Name":"unit","Value":""}
+{"Metric":"linux.processes","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"TLB"},"Name":"desc","Value":"TLB (translation lookaside buffer) shootdowns."}
+{"Metric":"linux.mem.cached","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.udplite.sndbuferrors","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_ps","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.net.errs","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.sackrecovery","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.read_sectors","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":"Total number of sectors read successfully."}
+{"Metric":"linux.mem.pageoutrun","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgmigrate_success","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"2","host":"tpmint","type":"idle"},"Name":"desc","Value":"Twiddling thumbs."}
+{"Metric":"linux.net.stat.tcp.sackreorder","Name":"rate","Value":"counter"}
+{"Metric":"os.system.uptime","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.icmp.intimestampreps","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.write_sectors","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.hugepagesize","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.disk.fs.space_free","Name":"unit","Value":"bytes"}
+{"Metric":"linux.net.bytes","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.fs.inodes_used","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.nr_slab_reclaimable","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"3","host":"tpmint","type":"nice"},"Name":"desc","Value":"Niced processes executing in user mode."}
+{"Metric":"linux.cpu.clock","Name":"unit","Value":"MHz"}
+{"Metric":"linux.net.stat.tcp.listendrops","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.cached","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.net.stat.tcp.passiveopens","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.writeback","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.disk.part.msec_total","Tags":{"dev":"sda1","host":"tpmint"},"Name":"desc","Value":"Amount of time during which ios_in_progress >= 1."}
+{"Metric":"linux.mem.nr_active_anon","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.total_duration","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.time_per_read","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.cpu.percpu","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.ios_in_progress","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":"Number of actual I/O requests currently in flight."}
+{"Metric":"linux.net.sockets.udp_in_use","Name":"unit","Value":"sockets"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"0","host":"tpmint","type":"system"},"Name":"desc","Value":"Processes executing in kernel mode."}
+{"Metric":"linux.net.stat.tcp.rcvpruned","Name":"rate","Value":"counter"}
+{"Metric":"linux.processes","Tags":{"host":"tpmint"},"Name":"desc","Value":"The number  of processes and threads created, which includes (but  is not limited  to) those  created by  calls to the  fork() and clone() system calls."}
+{"Metric":"linux.disk.part.msec_read","Tags":{"dev":"sda2","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all reads."}
+{"Metric":"linux.net.stat.tcp.syncookiesrecv","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.nr_unstable","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.block_size","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":"Sector size of the block device."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"2","host":"tpmint","type":"guest_nice"},"Name":"desc","Value":"Running a niced guest vm."}
+{"Metric":"linux.net.stat.tcp.delayedacks","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.unevictable_pgs_stranded","Name":"rate","Value":"counter"}
+{"Metric":"os.mem.free","Tags":{"host":"tpmint"},"Name":"desc","Value":"Number, in bytes, of physical memory currently unused and available."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"NMI"},"Name":"desc","Value":"Non-maskable interrupts."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"LOC"},"Name":"desc","Value":"Local timer interrupts."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"THR"},"Name":"desc","Value":"Threshold APIC interrupts."}
+{"Metric":"linux.net.stat.icmp.intimeexcds","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.outdestunreachs","Name":"rate","Value":"counter"}
+{"Metric":"linux.fs.open","Name":"rate","Value":"gauge"}
+{"Metric":"os.mem.total","Name":"unit","Value":"bytes"}
+{"Metric":"os.cpu.clock","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.post.batchsize_count","Name":"unit","Value":""}
+{"Metric":"linux.disk.bytes","Tags":{"dev":"sdb","host":"tpmint","type":"write"},"Name":"desc","Value":"Total number of bytes written to disk."}
+{"Metric":"linux.net.stat.ip.outdiscards","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.msec_total","Tags":{"dev":"sda5","host":"tpmint"},"Name":"desc","Value":"Amount of time during which ios_in_progress >= 1."}
+{"Metric":"linux.mem.mapped","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.post.duration_99","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.goroutines","Name":"desc","Value":"Total number of goroutines that currently exist (via runtime.NumGoroutine)."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"0","host":"tpmint","type":"idle"},"Name":"desc","Value":"Twiddling thumbs."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"TRM"},"Name":"desc","Value":"Thermal event interrupts."}
+{"Metric":"linux.disk.msec_read","Name":"unit","Value":"milliseconds"}
+{"Metric":"scollector.collect.gc.cpu_fraction","Name":"unit","Value":"percent"}
+{"Metric":"linux.mem.nr_page_table_pages","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"MCE"},"Name":"desc","Value":"Machine check exceptions."}
+{"Metric":"linux.net.stat.tcp.pawsactive","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.dirty","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"3","host":"tpmint","type":"guest"},"Name":"desc","Value":"Running a guest vm."}
+{"Metric":"os.net.errs","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgscan_kswapd_normal","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.sockets.udp_in_use","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.abortontimeout","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.ofoqueue","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_count","Name":"desc","Value":"The number of samples per aggregation."}
+{"Metric":"linux.disk.read_requests","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":"Total number of reads completed successfully."}
+{"Metric":"linux.mem.pgrefill_dma32","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"2","host":"tpmint","type":"system"},"Name":"desc","Value":"Processes executing in kernel mode."}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_ps_amps","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.net.multicast","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.nr_alloc_batch","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_fans","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"os.disk.fs.percent_free","Tags":{"disk":"/","host":"tpmint"},"Name":"desc","Value":"The percent_free property indicates what percentage of the disk is available."}
+{"Metric":"linux.net.stat.tcp.spuriousrtxhostqueues","Name":"rate","Value":"counter"}
+{"Metric":"linux.loadavg_5_min","Name":"unit","Value":"load"}
+{"Metric":"linux.net.stat.tcp.pawspassive","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.retransfail","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.ofodrop","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.outmcastoctets","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.writeback","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.msec_weighted_total","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":"Measure of recent I/O completion time and backlog."}
+{"Metric":"linux.mem.nr_isolated_anon","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.write_sectors","Tags":{"dev":"sdb1","host":"tpmint"},"Name":"desc","Value":"Total number of sectors written successfully."}
+{"Metric":"linux.mem.bounce","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.lossundo","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.udplite.indatagrams","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.sockets.raw_in_use","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.part.msec_read","Tags":{"dev":"sda1","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all reads."}
+{"Metric":"linux.mem.compact_migrate_scanned","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.outechos","Name":"rate","Value":"counter"}
+{"Metric":"linux.fs.open","Tags":{"host":"tpmint"},"Name":"desc","Value":"The number of files presently open."}
+{"Metric":"linux.mem.active","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.mem.anonpages","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.mem.nr_inactive_file","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.msec_weighted_total","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":"Measure of recent I/O completion time and backlog."}
+{"Metric":"linux.loadavg_total_threads","Name":"unit","Value":"processes"}
+{"Metric":"os.system.uptime","Name":"unit","Value":"seconds"}
+{"Metric":"linux.uptime_total","Tags":{"host":"tpmint"},"Name":"desc","Value":"Seconds since last reboot."}
+{"Metric":"linux.disk.fs.space_used","Tags":{"host":"tpmint","mount":"/"},"Name":"desc","Value":"The space_used property indicates in bytes how much space is used on the disk."}
+{"Metric":"os.disk.fs.space_total","Tags":{"disk":"/boot","host":"tpmint"},"Name":"desc","Value":"The space_total property indicates in bytes how much total space is on the disk."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_if_team_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.disk.part.read_sectors","Tags":{"dev":"sdb1","host":"tpmint"},"Name":"desc","Value":"Total number of sectors read successfully."}
+{"Metric":"linux.mem.unevictable_pgs_culled","Name":"rate","Value":"counter"}
+{"Metric":"linux.loadavg_total_threads","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.post.batchsize_95","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_fans","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"scollector.collect.sent","Name":"desc","Value":"Counter of data points sent to the server."}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_chassis","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.mem.nr_dirty_threshold","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"THR"},"Name":"desc","Value":"Threshold APIC interrupts."}
+{"Metric":"linux.disk.msec_total","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.unevictable_pgs_cleared","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_max","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.disk.part.write_requests","Tags":{"dev":"sdb1","host":"tpmint"},"Name":"desc","Value":"Total number of writes completed successfully."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"1","host":"tpmint","type":"system"},"Name":"desc","Value":"Processes executing in kernel mode."}
+{"Metric":"linux.processes","Name":"unit","Value":"processes"}
+{"Metric":"linux.net.stat.tcp.sackdiscard","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.sreclaimable","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.mem.pgrefill_dma","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_iostat_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.net.stat.ip.inaddrerrors","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_median","Name":"rate","Value":"gauge"}
+{"Metric":"os.mem.total","Tags":{"host":"tpmint"},"Name":"desc","Value":"Total amount, in bytes, of physical memory available to the operating system."}
+{"Metric":"linux.net.stat.tcp.outsegs","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_95","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.disk.ios_in_progress","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.bytes","Name":"unit","Value":"bytes"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_meta_linux_ifaces","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"os.disk.fs.space_used","Tags":{"disk":"/boot","host":"tpmint"},"Name":"desc","Value":"The space_used property indicates in bytes how much space is used on the disk."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"SPU"},"Name":"desc","Value":"Spurious interrupts."}
+{"Metric":"os.disk.fs.percent_free","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.part.write_merged","Tags":{"dev":"dm-1","host":"tpmint"},"Name":"desc","Value":" Adjacent write requests merged in a single req."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_redis","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"2","host":"tpmint","type":"steal"},"Name":"desc","Value":"Involuntary wait."}
+{"Metric":"scollector.collect.post.duration_min","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.fs.space_free","Tags":{"host":"tpmint","mount":"/"},"Name":"desc","Value":"The space_free property indicates in bytes how much free space is available on the disk."}
+{"Metric":"linux.mem.nr_mlock","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.count","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.fastopenactive","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_count","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.directmap4k","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.part.read_requests","Tags":{"dev":"dm-1","host":"tpmint"},"Name":"desc","Value":"Total number of reads completed successfully."}
+{"Metric":"os.cpu.clock","Tags":{"cpu":"0","host":"tpmint"},"Name":"desc","Value":"The current speed of the processor in MHz."}
+{"Metric":"linux.mem.swapfree","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.post.total_bytes","Name":"desc","Value":"Total number of gzipped bytes sent to the server."}
+{"Metric":"linux.disk.part.msec_weighted_total","Tags":{"dev":"sdb1","host":"tpmint"},"Name":"desc","Value":"Measure of recent I/O completion time and backlog."}
+{"Metric":"linux.cpu","Tags":{"host":"tpmint","type":"guest_nice"},"Name":"desc","Value":"Running a niced guest vm."}
+{"Metric":"linux.net.stat.icmp.inechoreps","Name":"rate","Value":"counter"}
+{"Metric":"linux.uptime_total","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.zone_reclaim_failed","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.sockets.tcp_orphaned","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.directcopyfromprequeue","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.vmallocused","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.net.stat.tcp.reqqfulldocookies","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.outerrors","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.outtimeexcds","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu","Tags":{"host":"tpmint","type":"irq"},"Name":"desc","Value":"Servicing interrupts."}
+{"Metric":"scollector.collect.post.error","Name":"desc","Value":"Counter of errors received when sending a batch to the server."}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_snmp_keepalived_vrrp_instances","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.mem.nr_writeback_temp","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.write_merged","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":" Adjacent write requests merged in a single req."}
+{"Metric":"linux.net.stat.tcp.tw","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.inaddrmasks","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.alloc","Name":"unit","Value":"bytes"}
+{"Metric":"linux.mem.directmap4k","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.net.stat.tcp.fastopencookiereqd","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.outechoreps","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.nfs_unstable","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.msec_weighted_total","Name":"unit","Value":"milliseconds"}
+{"Metric":"scollector.collect.queued","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.post.batchsize_max","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.msec_write","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all writes."}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_memory","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.disk.read_requests","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":"Total number of reads completed successfully."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"MCP"},"Name":"desc","Value":"Machine Check polls."}
+{"Metric":"scollector.collect.post.batchsize_count","Name":"desc","Value":"The number of samples per aggregation."}
+{"Metric":"linux.net.stat.tcp.timewaitoverflow","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_memcached_stats","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_storage_battery","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.mem.nr_dirty","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.allocstall","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.tsreorder","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.outnoroutes","Name":"rate","Value":"counter"}
+{"Metric":"os.disk.fs.space_used","Name":"unit","Value":"bytes"}
+{"Metric":"linux.disk.part.msec_write","Tags":{"dev":"sda2","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all writes."}
+{"Metric":"linux.disk.block_size","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":"Sector size of the block device."}
+{"Metric":"linux.mem.numa_pte_updates","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"1","host":"tpmint","type":"nice"},"Name":"desc","Value":"Niced processes executing in user mode."}
+{"Metric":"linux.net.stat.ip.inect0pkts","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.udp.incsumerrors","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.anonpages","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_ntp_peers_unix","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.disk.part.read_sectors","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.ios_in_progress","Tags":{"dev":"sda1","host":"tpmint"},"Name":"desc","Value":"Number of actual I/O requests currently in flight."}
+{"Metric":"linux.disk.part.msec_total","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"1","host":"tpmint","type":"guest"},"Name":"desc","Value":"Running a guest vm."}
+{"Metric":"linux.net.stat.tcp.dsackundo","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.udplite.outdatagrams","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.vmalloctotal","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.mem.shmem","Name":"unit","Value":"kbytes"}
+{"Metric":"scollector.version","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.pgrotated","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.read_sectors","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":"Total number of sectors read successfully."}
+{"Metric":"linux.mem.inactive","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.fullundo","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.rcvcoalesce","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"THR"},"Name":"desc","Value":"Threshold APIC interrupts."}
+{"Metric":"scollector.collect.gc.cpu_fraction","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_dfstat_inodes_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.net.stat.tcp.sackreneging","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.inactive","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.disk.fs.space_total","Name":"unit","Value":"bytes"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_nodestats_cfstats_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"1","host":"tpmint","type":"idle"},"Name":"desc","Value":"Twiddling thumbs."}
+{"Metric":"linux.net.stat.tcp.syncookiessent","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.inerrors","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.intimestamps","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.vmallocused","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.fs.space_free","Tags":{"host":"tpmint","mount":"/boot"},"Name":"desc","Value":"The space_free property indicates in bytes how much free space is available on the disk."}
+{"Metric":"linux.disk.part.ios_in_progress","Tags":{"dev":"sdb1","host":"tpmint"},"Name":"desc","Value":"Number of actual I/O requests currently in flight."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"NMI"},"Name":"desc","Value":"Non-maskable interrupts."}
+{"Metric":"linux.net.sockets.tcp_time_wait","Name":"unit","Value":"sockets"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"SPU"},"Name":"desc","Value":"Spurious interrupts."}
+{"Metric":"linux.net.stat.ip.inoctets","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.inbcastoctets","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"LOC"},"Name":"desc","Value":"Local timer interrupts."}
+{"Metric":"linux.mem.nr_inactive_anon","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.dropped","Name":"desc","Value":"Counter of dropped data points due to the queue being full."}
+{"Metric":"linux.mem.nr_shmem","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu","Tags":{"host":"tpmint","type":"user"},"Name":"desc","Value":"Normal processes executing in user mode."}
+{"Metric":"linux.disk.ios_in_progress","Name":"unit","Value":"Operations"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"SPU"},"Name":"desc","Value":"Spurious interrupts."}
+{"Metric":"scollector.collector.error","Name":"unit","Value":"ok"}
+{"Metric":"linux.disk.ios_in_progress","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":"Number of actual I/O requests currently in flight."}
+{"Metric":"linux.net.stat.tcp.hphitstouser","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.directmap2m","Name":"unit","Value":"kbytes"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_netbackup_jobs","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"os.net.bytes","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.dsackoforecv","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_min","Name":"desc","Value":"How many milliseconds it took to send HTTP POST requests to the server."}
+{"Metric":"scollector.hi","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.numa_foreign","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pswp","Name":"unit","Value":"pages"}
+{"Metric":"linux.mem.pagetables","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.write_sectors","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":"Total number of sectors written successfully."}
+{"Metric":"os.mem.percent_free","Name":"unit","Value":"percent"}
+{"Metric":"linux.disk.fs.inodes_free","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.post.batchsize_avg","Name":"desc","Value":"Number of datapoints included in each batch."}
+{"Metric":"linux.mem.pginodesteal","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.sockets.used","Name":"unit","Value":"sockets"}
+{"Metric":"linux.disk.part.write_sectors","Tags":{"dev":"sda2","host":"tpmint"},"Name":"desc","Value":"Total number of sectors written successfully."}
+{"Metric":"linux.mem.unevictable_pgs_scanned","Name":"rate","Value":"counter"}
+{"Metric":"os.cpu.clock","Tags":{"cpu":"1","host":"tpmint"},"Name":"desc","Value":"The current speed of the processor in MHz."}
+{"Metric":"linux.net.ifspeed","Name":"unit","Value":"Mbit"}
+{"Metric":"linux.mem.pgsteal_kswapd_dma32","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"0","host":"tpmint","type":"guest"},"Name":"desc","Value":"Running a guest vm."}
+{"Metric":"os.disk.fs.space_free","Name":"rate","Value":"gauge"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"PMI"},"Name":"desc","Value":"Performance monitoring interrupts."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"IWI"},"Name":"desc","Value":"IRQ work interrupts."}
+{"Metric":"linux.net.sockets.udplite_in_use","Name":"unit","Value":"sockets"}
+{"Metric":"linux.net.stat.tcp.fastopenpassive","Name":"rate","Value":"counter"}
+{"Metric":"scollector.hi","Tags":{"host":"tpmint"},"Name":"desc","Value":"Scollector sends a 1 every DefaultFreq. This is so you can alert on scollector being down."}
+{"Metric":"linux.net.sockets.udplite_in_use","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.sockets.frag_in_use","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.udplite.incsumerrors","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.time_per_read","Name":"rate","Value":"rate"}
+{"Metric":"linux.mem.pswp","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.numa_huge_pte_updates","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"IWI"},"Name":"desc","Value":"IRQ work interrupts."}
+{"Metric":"linux.net.stat.icmp.inparmprobs","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.read_sectors","Tags":{"dev":"sda1","host":"tpmint"},"Name":"desc","Value":"Total number of sectors read successfully."}
+{"Metric":"linux.disk.part.write_requests","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu","Tags":{"host":"tpmint","type":"softirq"},"Name":"desc","Value":"Servicing soft irqs."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"MCE"},"Name":"desc","Value":"Machine check exceptions."}
+{"Metric":"linux.net.stat.tcp.activeopens","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.restore","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.outmsgs","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.inerrs","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.abortonlinger","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.mapped","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.uptime_total","Name":"unit","Value":"seconds"}
+{"Metric":"linux.net.stat.tcp.syncookiesfailed","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"MCE"},"Name":"desc","Value":"Machine check exceptions."}
+{"Metric":"linux.mem.unevictable","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.hardwarecorrupted","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_storage_controller","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_volts","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.disk.part.write_sectors","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.msec_read","Tags":{"dev":"dm-1","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all reads."}
+{"Metric":"linux.net.stat.tcp.dsackoldsent","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.memtotal","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.pgdeactivate","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"0","host":"tpmint","type":"nice"},"Name":"desc","Value":"Niced processes executing in user mode."}
+{"Metric":"linux.mem.nr_anon_pages","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_max","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.read_requests","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.msec_write","Tags":{"dev":"sda1","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all writes."}
+{"Metric":"linux.mem.thp_fault_alloc","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.fragcreates","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_median","Name":"desc","Value":"How many milliseconds it took to send HTTP POST requests to the server."}
+{"Metric":"linux.mem.pgmigrate_fail","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.msec_read","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all reads."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"0","host":"tpmint","type":"irq"},"Name":"desc","Value":"Servicing interrupts."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"RES"},"Name":"desc","Value":"Rescheduling interrupts."}
+{"Metric":"scollector.collect.post.batchsize_count","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.pgscan_direct_normal","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.kswapd_high_wmark_hit_quickly","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.write_requests","Tags":{"dev":"dm-0","host":"tpmint"},"Name":"desc","Value":"Total number of writes completed successfully."}
+{"Metric":"linux.disk.part.write_merged","Tags":{"dev":"sda5","host":"tpmint"},"Name":"desc","Value":" Adjacent write requests merged in a single req."}
+{"Metric":"linux.disk.part.msec_write","Tags":{"dev":"sda5","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all writes."}
+{"Metric":"linux.net.stat.tcp.retranssegs","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.error","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.ipreversepathfilter","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.slab","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.mem.compact_stall","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.read_merged","Tags":{"dev":"dm-1","host":"tpmint"},"Name":"desc","Value":"Adjacent read requests merged in a single req."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"PMI"},"Name":"desc","Value":"Performance monitoring interrupts."}
+{"Metric":"linux.net.stat.tcp.deferacceptdrop","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.nr_free_cma","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.unevictable_pgs_munlocked","Name":"rate","Value":"counter"}
+{"Metric":"linux.procs_blocked","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.icmp.outaddrmaskreps","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.msec_read","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all reads."}
+{"Metric":"linux.disk.part.msec_write","Tags":{"dev":"sdb1","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all writes."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"1","host":"tpmint","type":"iowait"},"Name":"desc","Value":"Waiting for I/O to complete."}
+{"Metric":"linux.ctxt","Name":"unit","Value":"context switches"}
+{"Metric":"scollector.collect.sent","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.inbcastpkts","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_meta_linux_serial","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.mem.mlocked","Name":"unit","Value":"kbytes"}
+{"Metric":"os.disk.fs.space_free","Tags":{"disk":"/boot","host":"tpmint"},"Name":"desc","Value":"The space_free property indicates in bytes how much free space is available on the disk."}
+{"Metric":"linux.disk.read_sectors","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.reasmreqds","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.batchsize_avg","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_dfstat_blocks_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.mem.pagetables","Name":"unit","Value":"kbytes"}
+{"Metric":"os.mem.total","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.bytes","Tags":{"dev":"sda","host":"tpmint","type":"write"},"Name":"desc","Value":"Total number of bytes written to disk."}
+{"Metric":"linux.mem.memtotal","Name":"unit","Value":"kbytes"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_procstats_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.disk.write_merged","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":" Adjacent write requests merged in a single req."}
+{"Metric":"scollector.collect.dropped","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.nr_vmscan_write","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.ios_in_progress","Tags":{"dev":"sda5","host":"tpmint"},"Name":"desc","Value":"Number of actual I/O requests currently in flight."}
+{"Metric":"linux.disk.part.write_sectors","Tags":{"dev":"dm-1","host":"tpmint"},"Name":"desc","Value":"Total number of sectors written successfully."}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_ps","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.disk.fs.inodes_total","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.post.duration_95","Name":"rate","Value":"gauge"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"0","host":"tpmint","type":"iowait"},"Name":"desc","Value":"Waiting for I/O to complete."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"3","host":"tpmint","type":"steal"},"Name":"desc","Value":"Involuntary wait."}
+{"Metric":"linux.net.stat.tcp.rtomax","Name":"rate","Value":"gauge"}
+{"Metric":"os.disk.fs.space_used","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_ntp_peers_unix","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_nodestats_cfstats_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_iostat_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.disk.msec_total","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.mem.pgmajfault","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgmajfault","Name":"unit","Value":"pages"}
+{"Metric":"linux.net.stat.tcp.twrecycled","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.udp.rcvbuferrors","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.msec_read","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.compressed","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.abortonmemory","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.memfree","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.net.stat.tcp.ofopruned","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_temps","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"MCP"},"Name":"desc","Value":"Machine Check polls."}
+{"Metric":"linux.net.stat.tcp.fastretrans","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.batchsize_99","Name":"unit","Value":""}
+{"Metric":"scollector.collect.post.duration_avg","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.mem.numa_pages_migrated","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"IWI"},"Name":"desc","Value":"IRQ work interrupts."}
+{"Metric":"scollector.collect.post.batchsize_99","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.part.time_per_read","Name":"rate","Value":"rate"}
+{"Metric":"linux.mem.unevictable_pgs_mlocked","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu","Tags":{"host":"tpmint","type":"nice"},"Name":"desc","Value":"Niced processes executing in user mode."}
+{"Metric":"scollector.collect.goroutines","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.committed_as","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.fs.space_total","Tags":{"host":"tpmint","mount":"/boot"},"Name":"desc","Value":"The space_total property indicates in bytes how much total space is on the disk."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_ps_amps","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.procs_blocked","Tags":{"host":"tpmint"},"Name":"desc","Value":"The  number of  processes currently blocked, waiting for I/O to complete."}
+{"Metric":"linux.net.stat.tcp.hphits","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.incsumerrors","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.fs.space_used","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.sockets.used","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.sockets.udp_mem","Name":"unit","Value":"pages"}
+{"Metric":"linux.net.stat.icmp.outtimestamps","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.bytes","Tags":{"dev":"dm-0","host":"tpmint","type":"write"},"Name":"desc","Value":"Total number of bytes written to disk."}
+{"Metric":"linux.mem.nr_written","Name":"rate","Value":"counter"}
+{"Metric":"os.net.dropped","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_storage_enclosure","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"scollector.collect.post.duration_99","Name":"unit","Value":"milliseconds"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"2","host":"tpmint","type":"MCP"},"Name":"desc","Value":"Machine Check polls."}
+{"Metric":"linux.net.sockets.tcp_mem","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.reqqfulldrop","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.committed_as","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.disk.part.msec_total","Tags":{"dev":"dm-1","host":"tpmint"},"Name":"desc","Value":"Amount of time during which ios_in_progress >= 1."}
+{"Metric":"linux.intr","Name":"unit","Value":"interupts"}
+{"Metric":"linux.net.stat.tcp.arpfilter","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_system","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.disk.fs.space_free","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.post.error","Name":"unit","Value":"per second"}
+{"Metric":"linux.cpu","Tags":{"host":"tpmint","type":"steal"},"Name":"desc","Value":"Involuntary wait."}
+{"Metric":"linux.net.stat.tcp.rcvcollapsed","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.nr_active_file","Name":"rate","Value":"counter"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"NMI"},"Name":"desc","Value":"Non-maskable interrupts."}
+{"Metric":"linux.net.stat.ip.outmcastpkts","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.rtoalgorithm","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.swapfree","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.mem.thp_collapse_alloc","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.schedulerfailed","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.minttldrop","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.pgfault","Name":"unit","Value":"pages"}
+{"Metric":"linux.net.fifo_errs","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_ipcount_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.mem.numa_local","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.msec_write","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all writes."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"3","host":"tpmint","type":"idle"},"Name":"desc","Value":"Twiddling thumbs."}
+{"Metric":"scollector.collect.post.batchsize_min","Name":"unit","Value":""}
+{"Metric":"linux.net.stat.tcp.busypollrxpackets","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.yum_update_stats_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.mem.pgscan_direct_throttle","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.clock","Tags":{"cpu":"3","host":"tpmint"},"Name":"desc","Value":"The current speed of the processor in MHz."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"1","host":"tpmint","type":"RES"},"Name":"desc","Value":"Rescheduling interrupts."}
+{"Metric":"linux.net.sockets.frag_mem","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.insegs","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.ios_in_progress","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.bytes","Tags":{"dev":"sdb","host":"tpmint","type":"read"},"Name":"desc","Value":"Total number of bytes read to disk."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"1","host":"tpmint","type":"softirq"},"Name":"desc","Value":"Servicing soft irqs."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_memcached_stats","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.mem.buffers","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"TLB"},"Name":"desc","Value":"TLB (translation lookaside buffer) shootdowns."}
+{"Metric":"linux.net.sockets.tcp_orphaned","Name":"unit","Value":"sockets"}
+{"Metric":"linux.net.stat.tcp.partialundo","Name":"rate","Value":"counter"}
+{"Metric":"linux.uptime_now","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collect.post.restore","Name":"unit","Value":"per second"}
+{"Metric":"linux.mem.pgscan_direct_dma","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.ios_in_progress","Tags":{"dev":"sdb","host":"tpmint"},"Name":"desc","Value":"Number of actual I/O requests currently in flight."}
+{"Metric":"linux.net.stat.icmp.incsumerrors","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmpmsg.intype3","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.unevictable","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.disk.part.read_requests","Tags":{"dev":"sda5","host":"tpmint"},"Name":"desc","Value":"Total number of reads completed successfully."}
+{"Metric":"linux.net.stat.udplite.inerrors","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.batchsize_95","Name":"desc","Value":"Number of datapoints included in each batch."}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_meta_linux_version","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"3","host":"tpmint","type":"guest_nice"},"Name":"desc","Value":"Running a niced guest vm."}
+{"Metric":"linux.net.stat.udp.noports","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.duration_avg","Name":"desc","Value":"How many milliseconds it took to send HTTP POST requests to the server."}
+{"Metric":"linux.disk.bytes","Tags":{"dev":"dm-0","host":"tpmint","type":"read"},"Name":"desc","Value":"Total number of bytes read to disk."}
+{"Metric":"linux.net.stat.tcp.rtomin","Name":"rate","Value":"gauge"}
+{"Metric":"linux.disk.part.ios_in_progress","Name":"unit","Value":"Operations"}
+{"Metric":"scollector.collect.post.count","Name":"unit","Value":"per second"}
+{"Metric":"linux.net.stat.tcp.dsackignorednoundo","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.indestunreachs","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_ipcount_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.disk.read_merged","Tags":{"dev":"sda","host":"tpmint"},"Name":"desc","Value":"Adjacent read requests merged in a single req."}
+{"Metric":"linux.disk.part.write_requests","Tags":{"dev":"sda2","host":"tpmint"},"Name":"desc","Value":"Total number of writes completed successfully."}
+{"Metric":"linux.disk.part.write_requests","Tags":{"dev":"sda5","host":"tpmint"},"Name":"desc","Value":"Total number of writes completed successfully."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"3","host":"tpmint","type":"RES"},"Name":"desc","Value":"Rescheduling interrupts."}
+{"Metric":"linux.net.stat.ip.inreceives","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.icmp.outsrcquenchs","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_storage_battery","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.mem.memfree","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.pgsteal_kswapd_dma","Name":"rate","Value":"counter"}
+{"Metric":"os.cpu.clock","Tags":{"cpu":"2","host":"tpmint"},"Name":"desc","Value":"The current speed of the processor in MHz."}
+{"Metric":"scollector.collect.post.batchsize_95","Name":"unit","Value":""}
+{"Metric":"linux.mem.nr_isolated_file","Name":"rate","Value":"counter"}
+{"Metric":"linux.loadavg_1_min","Name":"unit","Value":"load"}
+{"Metric":"os.net.ifspeed","Name":"unit","Value":"Mbit"}
+{"Metric":"linux.mem.pgalloc_normal","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.tcp.forwardretrans","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_ifstat_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.net.sockets.tcp_allocated","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_dfstat_inodes_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.interrupts","Tags":{"cpu":"0","host":"tpmint","type":"PMI"},"Name":"desc","Value":"Performance monitoring interrupts."}
+{"Metric":"linux.net.stat.udplite.noports","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.sunreclaim","Name":"unit","Value":"kbytes"}
+{"Metric":"linux.mem.active","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.frame_errs","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.buffers","Name":"rate","Value":"gauge"}
+{"Metric":"linux.mem.nr_free_pages","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_ifstat_linux","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.net.stat.ip.inect1pkts","Name":"rate","Value":"counter"}
+{"Metric":"linux.mem.dirty","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.carrier_errs","Name":"rate","Value":"counter"}
+{"Metric":"linux.disk.part.msec_total","Tags":{"dev":"sdb1","host":"tpmint"},"Name":"desc","Value":"Amount of time during which ios_in_progress >= 1."}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"1","host":"tpmint","type":"guest_nice"},"Name":"desc","Value":"Running a niced guest vm."}
+{"Metric":"linux.mem.nr_mapped","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.stat.ip.outbcastpkts","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_omreport_storage_vdisk","host":"tpmint","os":"linux"},"Name":"desc","Value":"Status of collector run. 1=Error, 0=Success."}
+{"Metric":"linux.net.stat.icmp.outredirects","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collector.error","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.stat.tcp.sackshifted","Name":"rate","Value":"counter"}
+{"Metric":"linux.net.sockets.udp_mem","Name":"rate","Value":"gauge"}
+{"Metric":"os.disk.fs.space_total","Name":"rate","Value":"gauge"}
+{"Metric":"linux.net.ip_count","Name":"unit","Value":"IP_Addresses"}
+{"Metric":"linux.disk.part.msec_write","Tags":{"dev":"dm-1","host":"tpmint"},"Name":"desc","Value":"Total number of ms spent by all writes."}
+{"Metric":"linux.net.stat.tcp.listenoverflows","Name":"rate","Value":"counter"}
+{"Metric":"scollector.collect.post.batchsize_median","Name":"rate","Value":"gauge"}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_meta_linux_serial","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"scollector.collector.duration","Tags":{"collector":"bosun.org/cmd/scollector/collectors.c_meta_linux_version","host":"tpmint","os":"linux"},"Name":"desc","Value":"Duration in seconds for each collector run."}
+{"Metric":"linux.mem.compact_success","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu","Tags":{"host":"tpmint","type":"iowait"},"Name":"desc","Value":"Waiting for I/O to complete."}
+{"Metric":"os.disk.fs.space_used","Tags":{"disk":"/","host":"tpmint"},"Name":"desc","Value":"The space_used property indicates in bytes how much space is used on the disk."}
+{"Metric":"linux.mem.pgrefill_normal","Name":"rate","Value":"counter"}
+{"Metric":"linux.cpu.percpu","Tags":{"cpu":"2","host":"tpmint","type":"guest"},"Name":"desc","Value":"Running a guest vm."}
+{"Metric":"linux.mem.pgalloc_dma32","Name":"rate","Value":"counter"}

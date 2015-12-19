@@ -32,6 +32,10 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -70,6 +74,7 @@ import com.heliosapm.utils.jmx.JMXHelper;
 public class JSON {
 	public static final Charset UTF8 = Charset.forName("UTF8");
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
+	private static final Map<String, String> EMPTY_MAP = Collections.emptyMap();
 	static {
 		jsonMapper.configure(JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		registerSerializer(Trace.class, new TraceSerializer());
@@ -79,6 +84,21 @@ public class JSON {
 		registerDeserializer(Trace[].class, new TraceArrayDeserializer());
 	}
 	
+	
+	public static Map<String, String> from(final JsonNode node) {
+		if(node==null) return EMPTY_MAP;
+		final int size = node.size();
+		if(size==0) return EMPTY_MAP;
+		final Map<String, String> map = new HashMap<String, String>(node.size());
+		for(Iterator<String> iter = node.fieldNames(); iter.hasNext();) {
+			final String key = iter.next();
+			final JsonNode v = node.get(key);
+			if(v.isTextual()) {
+				map.put(key, v.textValue());
+			}
+		}
+		return map;
+	}
 	
 	/**
 	 * Registers a deser for the passed class

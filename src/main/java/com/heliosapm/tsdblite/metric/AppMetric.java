@@ -16,7 +16,6 @@
 package com.heliosapm.tsdblite.metric;
 
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.MBeanNotificationInfo;
@@ -25,11 +24,8 @@ import javax.management.ObjectName;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.heliosapm.tsdblite.json.JSON;
-import com.heliosapm.tsdblite.metric.MetricCache.Metric;
-import com.heliosapm.tsdblite.metric.MetricCache.MetricMBean;
 import com.heliosapm.utils.jmx.ExposedSubscribersNotificationBroadcaster;
 import com.heliosapm.utils.jmx.SharedNotificationExecutor;
-import com.heliosapm.utils.reflect.PrivateAccessor;
 
 /**
  * <p>Title: AppMetric</p>
@@ -48,6 +44,9 @@ public class AppMetric extends ExposedSubscribersNotificationBroadcaster impleme
 	protected double lastValue = Double.NaN;
 	/** The timestamp of the last value submitted */
 	protected long lastSubmission = -1L;
+	/** The timestamp of the last activity */
+	protected long lastActivity = -1L;
+	
 	
 	/** Notification serial number generator */
 	protected final AtomicLong notifSerial = new AtomicLong(-1L);
@@ -68,14 +67,15 @@ public class AppMetric extends ExposedSubscribersNotificationBroadcaster impleme
 		super(SharedNotificationExecutor.getInstance(), NOTIFS);
 		if(metric==null) throw new IllegalArgumentException("The passed metric was null");
 		this.metric = metric;
-		objectName = this.metric.toObjectName();		
+		objectName = this.metric.toObjectName();
+		lastActivity = System.currentTimeMillis();
 	}
 	
 	/**
 	 * Creates the AppMetric placeholder
 	 */
 	public AppMetric() {
-		this.metric = MetricCache.getInstance().PLACEHOLDER;
+		this.metric = Metric.PLACEHOLDER;
 		objectName = null;
 	}
 	
@@ -87,6 +87,7 @@ public class AppMetric extends ExposedSubscribersNotificationBroadcaster impleme
 	public void submit(final Trace trace) {		
 		lastValue = trace.isDoubleType() ? trace.getDoubleValue() : trace.getLongValue();
 		lastSubmission = trace.getTimestampMs();
+		lastActivity = System.currentTimeMillis();
 		if(hasSubscribers()) {
 			final long serial = notifSerial.incrementAndGet();
 			final Notification notif = new Notification(NOTIF_NEW_SUB, objectName, notifSerial.incrementAndGet(), lastSubmission, JSON.serializeToString(new SubNotif(objectName.toString(), trace.isDoubleType() ? trace.getDoubleValue() : trace.getLongValue(), lastSubmission, serial)));
@@ -168,6 +169,15 @@ public class AppMetric extends ExposedSubscribersNotificationBroadcaster impleme
 	public long getLastSubmission() {
 		return lastSubmission;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see com.heliosapm.tsdblite.metric.AppMetricMXBean#getLastActivity()
+	 */
+	@Override
+	public long getLastActivity() {
+		return lastActivity;
+	}
 
 	/**
 	 * Returns the timestamp of the last submission as a java Date 
@@ -246,6 +256,23 @@ public class AppMetric extends ExposedSubscribersNotificationBroadcaster impleme
 		} else if (!metric.equals(other.metric))
 			return false;
 		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AppMetric [objectName=");
+		builder.append(objectName);
+		builder.append(", lastValue=");
+		builder.append(lastValue);
+		builder.append(", lastSubmission=");
+		builder.append(lastSubmission);
+		builder.append("]");
+		return builder.toString();
 	}
 	
 	

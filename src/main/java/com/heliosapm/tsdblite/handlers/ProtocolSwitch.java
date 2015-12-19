@@ -15,6 +15,22 @@
  */
 package com.heliosapm.tsdblite.handlers;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
+import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.LineBasedFrameDecoder;
+import io.netty.handler.codec.compression.ZlibCodecFactory;
+import io.netty.handler.codec.compression.ZlibWrapper;
+import io.netty.handler.codec.http.HttpContentDecompressor;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.DefaultExecutorServiceFactory;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -25,32 +41,14 @@ import org.slf4j.LoggerFactory;
 
 import com.heliosapm.tsdblite.Constants;
 import com.heliosapm.tsdblite.Server;
+import com.heliosapm.tsdblite.handlers.http.HttpRequestManager;
 import com.heliosapm.tsdblite.handlers.http.HttpStaticFileServerHandler;
+import com.heliosapm.tsdblite.handlers.http.HttpSwitch;
 import com.heliosapm.tsdblite.handlers.text.StringArrayTraceDecoder;
 import com.heliosapm.tsdblite.handlers.text.WordSplitter;
-import com.heliosapm.tsdblite.handlers.websock.WebSocketServerHandler;
 import com.heliosapm.tsdblite.jmx.ManagedDefaultExecutorServiceFactory;
 import com.heliosapm.utils.config.ConfigurationHelper;
 import com.heliosapm.utils.jmx.JMXHelper;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
-import io.netty.handler.codec.ByteToMessageDecoder;
-import io.netty.handler.codec.LineBasedFrameDecoder;
-import io.netty.handler.codec.compression.ZlibCodecFactory;
-import io.netty.handler.codec.compression.ZlibWrapper;
-import io.netty.handler.codec.http.HttpContentCompressor;
-import io.netty.handler.codec.http.HttpContentDecompressor;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
-import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
-import io.netty.util.concurrent.DefaultExecutorServiceFactory;
 
 /**
  * <p>Title: ProtocolSwitch</p>
@@ -79,6 +77,7 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
     private static final StringEncoder PLAINTEXT_ENCODER = new StringEncoder();
     private static final WordSplitter PLAINTEXT_DECODER = new WordSplitter();
     private static final StringArrayTraceDecoder TRACE_DECODER = new StringArrayTraceDecoder();
+    private final HttpSwitch HTTP_SWITCH = new HttpSwitch(eventExecutorGroup); 
     /** The child channel logging handler */
     @SuppressWarnings("unused")
 	private static final LoggingHandler loggingHandler = new LoggingHandler(ProtocolSwitch.class, LogLevel.INFO); 	
@@ -164,8 +163,9 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
 //        p.addLast("encoder", new HttpResponseEncoder());
 //        p.addLast("decoder", new HttpRequestDecoder());
 //        p.addLast("deflater", new HttpContentCompressor(1));
+        
         p.addLast("inflater", new HttpContentDecompressor());
-        p.addLast(new HttpObjectAggregator(1048576 * 2));
+        
         
         //p.addLast("logging", loggingHandler);
         
@@ -176,7 +176,9 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
         //p.addLast("logging", loggingHandler);
 //        p.addLast("logging", loggingHandler);
         //WebSocketServerHandler
-        p.addLast(eventExecutorGroup, "requestManager", new WebSocketServerHandler());
+        //p.addLast(eventExecutorGroup, "requestManager", new WebSocketServerHandler());
+        p.addLast(new HttpObjectAggregator(1048576 * 2));
+        p.addLast("httpSwitch", HTTP_SWITCH);
 //        p.addLast(eventExecutorGroup, "requestManager", HttpRequestManager.getInstance());
 //        p.addLast("requestManager", HttpRequestManager.getInstance());        
         p.remove(this);

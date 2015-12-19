@@ -30,3 +30,12 @@ wsSub.onerror = function(err) {
 	console.groupEnd();	
 }
 
+function ping() {
+	wsSub.send(JSON.stringify(
+			{
+				rid : 23,
+				op : "ping",
+				session : sessionId
+			}
+	));
+}
