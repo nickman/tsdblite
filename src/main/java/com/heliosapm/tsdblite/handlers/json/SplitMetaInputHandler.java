@@ -60,7 +60,7 @@ public class SplitMetaInputHandler extends SimpleChannelInboundHandler<ByteBuf> 
 	
 	
 	@Override
-	protected void messageReceived(final ChannelHandlerContext ctx, final ByteBuf msg) throws Exception {
+	protected void channelRead0(final ChannelHandlerContext ctx, final ByteBuf msg) throws Exception {
 		log.info(msg.toString(UTF8));
 //		if(log.isTraceEnabled()) {
 //			log.trace(msg.toString(UTF8));

@@ -72,7 +72,7 @@ public class SplitTraceInputHandler extends SimpleChannelInboundHandler<ByteBuf>
 	
 	
 	@Override
-	protected void messageReceived(final ChannelHandlerContext ctx, final ByteBuf msg) throws Exception {
+	protected void channelRead0(final ChannelHandlerContext ctx, final ByteBuf msg) throws Exception {
 		if(log.isTraceEnabled()) {
 			log.trace(msg.toString(UTF8));
 		}		

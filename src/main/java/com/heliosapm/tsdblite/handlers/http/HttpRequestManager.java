@@ -106,10 +106,10 @@ public class HttpRequestManager extends SimpleChannelInboundHandler<HttpRequest>
 	
 	/**
 	 * {@inheritDoc}
-	 * @see io.netty.channel.SimpleChannelInboundHandler#messageReceived(io.netty.channel.ChannelHandlerContext, java.lang.Object)
+	 * @see io.netty.channel.SimpleChannelInboundHandler#channelRead0(io.netty.channel.ChannelHandlerContext, java.lang.Object)
 	 */
 	@Override
-	public void messageReceived(final ChannelHandlerContext ctx, final HttpRequest msg) throws Exception {
+	protected void channelRead0(final ChannelHandlerContext ctx, final HttpRequest msg) throws Exception {
 		try {
 			final String uri = msg.uri();
 			final Channel channel = ctx.channel();
@@ -148,7 +148,7 @@ public class HttpRequestManager extends SimpleChannelInboundHandler<HttpRequest>
 			handler.process(r);			
 		} catch (Exception ex) {
 			log.error("HttpRequest Routing Error", ex);
-		}
+		}		
 	}
 	
     /**
@@ -159,6 +159,7 @@ public class HttpRequestManager extends SimpleChannelInboundHandler<HttpRequest>
     	log.error("Uncaught exception", t);
     	//super.exceptionCaught(ctx, t);
     }
+
 	
 
 }

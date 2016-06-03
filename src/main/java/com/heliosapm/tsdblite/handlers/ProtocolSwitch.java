@@ -15,6 +15,26 @@
  */
 package com.heliosapm.tsdblite.handlers;
 
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.management.ObjectName;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.heliosapm.tsdblite.Constants;
+import com.heliosapm.tsdblite.Server;
+import com.heliosapm.tsdblite.handlers.http.HttpStaticFileServerHandler;
+import com.heliosapm.tsdblite.handlers.http.HttpSwitch;
+import com.heliosapm.tsdblite.handlers.text.StringArrayTraceDecoder;
+import com.heliosapm.tsdblite.handlers.text.WordSplitter;
+import com.heliosapm.tsdblite.jmx.ManagedDefaultExecutorServiceFactory;
+import com.heliosapm.utils.config.ConfigurationHelper;
+import com.heliosapm.utils.jmx.JMXHelper;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -29,26 +49,6 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
-import io.netty.util.concurrent.DefaultExecutorServiceFactory;
-
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-
-import javax.management.ObjectName;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.heliosapm.tsdblite.Constants;
-import com.heliosapm.tsdblite.Server;
-import com.heliosapm.tsdblite.handlers.http.HttpRequestManager;
-import com.heliosapm.tsdblite.handlers.http.HttpStaticFileServerHandler;
-import com.heliosapm.tsdblite.handlers.http.HttpSwitch;
-import com.heliosapm.tsdblite.handlers.text.StringArrayTraceDecoder;
-import com.heliosapm.tsdblite.handlers.text.WordSplitter;
-import com.heliosapm.tsdblite.jmx.ManagedDefaultExecutorServiceFactory;
-import com.heliosapm.utils.config.ConfigurationHelper;
-import com.heliosapm.utils.jmx.JMXHelper;
 
 /**
  * <p>Title: ProtocolSwitch</p>
@@ -66,8 +66,6 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
 	/** Instance logger */
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 	
-	/** Executor service factory */
-	protected static final DefaultExecutorServiceFactory executorServiceFactory = new DefaultExecutorServiceFactory(ProtocolSwitch.class);
 	/** The netty channel group thread pool */
 	protected static final ExecutorService eventPool;
 	/** The event executor */
@@ -89,7 +87,16 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
 	static {
 		final int eventThreads = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_NETTY_EVENT_THREADS, Constants.DEFAULT_NETTY_EVENT_THREADS);
 		eventPool = new ManagedDefaultExecutorServiceFactory("eventPool").newExecutorService(eventThreads);
-		eventExecutorGroup = new DefaultEventExecutorGroup(eventThreads, eventPool);
+		eventExecutorGroup = new DefaultEventExecutorGroup(24, new ThreadFactory(){
+			final AtomicInteger serial = new AtomicInteger();
+			@Override
+			public Thread newThread(final Runnable r) {
+				final Thread t = new Thread(r, "EventPoolThread#" + serial.incrementAndGet());
+				t.setDaemon(true);
+				return t;
+			}
+		});
+		// eventThreads, eventPool
 		HttpStaticFileServerHandler.getInstance();
 //		ManagedForkJoinPool.register(eventPool, EVENT_POOL_ON);		
 	}

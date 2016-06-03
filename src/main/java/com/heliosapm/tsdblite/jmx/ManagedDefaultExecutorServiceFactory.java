@@ -20,7 +20,9 @@ package com.heliosapm.tsdblite.jmx;
 
 import java.util.concurrent.ExecutorService;
 
-import io.netty.util.concurrent.ExecutorServiceFactory;
+import io.netty.util.concurrent.EventExecutorGroup;
+
+
 
 /**
  * <p>Title: ManagedDefaultExecutorServiceFactory</p>
@@ -30,7 +32,7 @@ import io.netty.util.concurrent.ExecutorServiceFactory;
  * <p><code>com.heliosapm.tsdblite.jmx.ManagedDefaultExecutorServiceFactory</code></p>
  */
 
-public class ManagedDefaultExecutorServiceFactory implements ExecutorServiceFactory {
+public class ManagedDefaultExecutorServiceFactory {
 	/** The name prefix of the ExecutorServiceFactory to be created by this factory */
 	final String name;
 	
@@ -42,11 +44,6 @@ public class ManagedDefaultExecutorServiceFactory implements ExecutorServiceFact
 		this.name = name;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * @see io.netty.util.concurrent.ExecutorServiceFactory#newExecutorService(int)
-	 */
-	@Override
 	public ExecutorService newExecutorService(final int parallelism) {
 		return new ManagedForkJoinPool(name, parallelism, true);
 	}

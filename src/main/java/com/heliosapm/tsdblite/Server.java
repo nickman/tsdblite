@@ -43,7 +43,6 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutor;
-import io.netty.util.concurrent.DefaultExecutorServiceFactory;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import jsr166e.LongAdder;
@@ -68,8 +67,6 @@ public class Server extends ChannelInitializer<SocketChannel> implements ServerM
 	protected final int port;
 	/** The listening bind interface */
 	protected final String iface;
-	/** The executor service factory to create thread pools */
-	protected final DefaultExecutorServiceFactory executorServiceFactory = new DefaultExecutorServiceFactory(getClass());
 	/** The netty boss thread pool */
 	protected final ExecutorService bossPool;
 	/** The netty worker thread pool */
