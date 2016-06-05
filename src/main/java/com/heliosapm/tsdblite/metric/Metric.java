@@ -20,6 +20,7 @@ package com.heliosapm.tsdblite.metric;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.management.ObjectName;
@@ -44,7 +45,7 @@ public class Metric implements MetricMBean {
 	/** The metric name */
 	protected final String metricName;
 	/** The metric tags */
-	protected final TreeMap<String, String> tags;
+	protected final SortedMap<String, String> tags;
 	/** The long hash code for this metric */
 	protected final long hashCode;
 	
@@ -64,15 +65,11 @@ public class Metric implements MetricMBean {
 	 */
 	Metric(final String metricName, final Map<String, String> tags, final long hashCode) {
 		if(metricName==null || metricName.trim().isEmpty()) throw new IllegalArgumentException("The passed metric name was null or empty");
-		this.metricName = metricName.trim();
+		this.metricName = MetricCache.clean(metricName, "metric name");
 		if(tags==null || tags.isEmpty()) {
 			this.tags = new TreeMap<String, String>();
 		} else {
-			final TreeMap<String, String> tmp = new TreeMap<String, String>(TagKeySorter.INSTANCE);
-			for(Map.Entry<String, String> entry: tags.entrySet()) {
-				tmp.put(entry.getKey().trim(), entry.getValue().trim());
-			}		
-			this.tags = tmp;
+			this.tags = MetricCache.clean(tags);
 		}
 		this.hashCode = hashCode;
 	}
@@ -170,10 +167,14 @@ public class Metric implements MetricMBean {
 	 * @return the metric tags
 	 */
 	@Override
-	public TreeMap<String, String> getTags() {
+	public SortedMap<String, String> getTags() {
 		return tags;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see com.heliosapm.tsdblite.metric.MetricMBean#getTagStr()
+	 */
 	@Override
 	public String getTagStr() {
 		return tagsToStr();

@@ -133,7 +133,7 @@ public class ProtocolSwitch extends ByteToMessageDecoder {
         final int magic2 = in.getUnsignedByte(in.readerIndex() + 1);
         if (detectGzip && isGzip(magic1, magic2)) {
             enableGzip(ctx);
-            log.info("Enabled GZIp on channel [{}]", ctx.channel().id().asShortText());
+            log.info("Enabled GZip on channel [{}]", ctx.channel().id().asShortText());
         } else if (isHttp(magic1, magic2)) {
             switchToHttp(ctx);
             log.info("Switched to HTTP on channel [{}]", ctx.channel().id().asShortText());

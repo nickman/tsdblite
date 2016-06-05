@@ -15,7 +15,7 @@
     <compiler-target.version>1.7</compiler-target.version>        
     <!-- Project Dependency Versions -->
     <junit.version>4.8.2</junit.version>
-    <netty.version>4.1.0.CR5</netty.version>
+    <netty.version>4.1.0.Final</netty.version>
     <jackson.version>2.6.3</jackson.version>
 	<slf4j.version>1.7.13</slf4j.version>
 	<logback.version>1.1.3</logback.version>
@@ -31,6 +31,7 @@
     <javadoc-plugin.version>2.10.3</javadoc-plugin.version>    
     <jar-plugin.version>2.6</jar-plugin.version>       
     <shade.version>2.4.2</shade.version>        
+    <zero-alloc-hash.version>0.6</zero-alloc-hash.version>
 
   </properties>
 
@@ -43,6 +44,13 @@
 	      <version>${junit.version}</version>
 	      <scope>test</scope>
 	    </dependency>
+
+		<dependency>
+		  <groupId>net.openhft</groupId>
+		  <artifactId>zero-allocation-hashing</artifactId>
+		  <version>${zero-alloc-hash.version}</version>
+		</dependency>
+
 
 
 	    <!-- Netty Dependencies -->

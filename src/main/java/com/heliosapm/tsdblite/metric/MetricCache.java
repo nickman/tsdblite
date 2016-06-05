@@ -16,15 +16,18 @@
 package com.heliosapm.tsdblite.metric;
 
 import java.nio.charset.Charset;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.MBeanServer;
@@ -34,26 +37,22 @@ import javax.management.QueryExp;
 import javax.management.StringValueExp;
 import javax.management.remote.JMXServiceURL;
 
-import jsr166e.LongAdder;
-
-import org.cliffc.high_scale_lib.NonBlockingHashMap;
 import org.cliffc.high_scale_lib.NonBlockingHashMapLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.hash.Funnel;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-import com.google.common.hash.PrimitiveSink;
 import com.heliosapm.tsdblite.Constants;
 import com.heliosapm.tsdblite.jmx.ManagedDefaultExecutorServiceFactory;
 import com.heliosapm.tsdblite.jmx.Util;
 import com.heliosapm.tsdblite.metric.AppMetric.SubNotif;
 import com.heliosapm.utils.config.ConfigurationHelper;
 import com.heliosapm.utils.jmx.JMXHelper;
+import com.heliosapm.utils.lang.StringHelper;
 import com.heliosapm.utils.time.SystemClock;
-import com.heliosapm.utils.tuples.NVP;
+
+import jsr166e.LongAdder;
+import net.openhft.hashing.LongHashFunction;
 
 /**
  * <p>Title: MetricCache</p>
@@ -76,8 +75,9 @@ public class MetricCache implements MetricCacheMXBean {
 	protected final MBeanServer metricMBeanServer;
 	/** The UTF8 character set */
 	public static final Charset UTF8 = Charset.forName("UTF8");
-	/** The hashing function to compute hashes for metric names */
-	public static final HashFunction METRIC_NAME_HASHER = Hashing.murmur3_128();
+	/** The hasher to compute long hash codes for metric names */
+	public static final LongHashFunction METRIC_HASHER = LongHashFunction.murmur_3();
+
 	
 	/** A counter for bad metric submissions */
 	private final LongAdder badMetrics = new LongAdder();
@@ -98,7 +98,33 @@ public class MetricCache implements MetricCacheMXBean {
 	final long expiry;
 	
 	/** The attribute names the expiry inquiry will request from each metric */
-	private static final String[] EXPIRY_ATTRIBUTES = new String[]{"MetricHashCode", "LastSubmission"};
+	private static final String[] EXPIRY_ATTRIBUTES = new String[]{"MetricHashCode", "LastActivity"}; // "LastSubmission"
+	
+	/** The configuration key for the maximum number of tags per IMetricName */
+	public static final String CONF_MAX_TAGS = "tracing.tags.max";
+	/** The default maximum number of tags per IMetricName */
+	public static final int DEFAULT_MAX_TAGS = 8;
+	
+	/** The configuration key for the minimum number of tags per IMetricName */
+	public static final String CONF_MIN_TAGS = "tracing.tags.min";
+	/** The default minimum number of tags per IMetricName */
+	public static final int DEFAULT_MIN_TAGS = 1;
+	
+	
+	/** The maximum number of tags per IMetricName */
+	public static final int MAX_TAGS;
+	/** The minimum number of tags per IMetricName */
+	public static final int MIN_TAGS;
+	
+	/** Consistent sorting */
+	public static final Collator ROOT_COLLATOR = Collator.getInstance(Locale.ROOT);
+	
+	
+	static {
+		MAX_TAGS = ConfigurationHelper.getIntSystemThenEnvProperty(CONF_MAX_TAGS, DEFAULT_MAX_TAGS);
+		MIN_TAGS = ConfigurationHelper.getIntSystemThenEnvProperty(CONF_MIN_TAGS, DEFAULT_MIN_TAGS);
+	}
+	
 
 	
 	/** The expiry task pool */
@@ -114,68 +140,6 @@ public class MetricCache implements MetricCacheMXBean {
 
 	
 	
-	/**
-	 * <p>Title: MetricNVPFunnel</p>
-	 * <p>Description: Funnel to compute hash codes for an unbuilt metric still in JSON form</p> 
-	 * <p>Company: Helios Development Group LLC</p>
-	 * @author Whitehead (nwhitehead AT heliosdev DOT org)
-	 * <p><code>com.heliosapm.tsdblite.metric.MetricCache.MetricNVPFunnel</code></p>
-	 */
-	private static enum MetricNVPFunnel implements Funnel<NVP<String, Map<String, String>>> {
-	    /** The funnel instance */
-	    INSTANCE;
-			/**
-			 * {@inheritDoc}
-			 * @see com.google.common.hash.Funnel#funnel(java.lang.Object, com.google.common.hash.PrimitiveSink)
-			 */
-			@Override
-			public void funnel(final NVP<String, Map<String, String>> metric, final PrimitiveSink into) {
-		    	into.putString(metric.getKey().trim(), UTF8);
-		    	final Map<String, String> map = metric.getValue();
-		    	if(map!=null && !map.isEmpty()) {
-		    		final TreeMap<String, String> tmap = new TreeMap<String, String>(TagKeySorter.INSTANCE);
-		    		tmap.putAll(map);
-			    	for(Map.Entry<String, String> entry: tmap.entrySet()) {
-			    		into.putString(entry.getKey().trim(), UTF8)
-			    		.putString(entry.getValue().trim(), UTF8);
-			    	}
-		    		
-		    	}
-			}
-	  }
-	
-	
-	/**
-	 * <p>Title: MetricJSONFunnel</p>
-	 * <p>Description: Funnel to compute hash codes for metrics while still in JSON form</p> 
-	 * <p>Company: Helios Development Group LLC</p>
-	 * @author Whitehead (nwhitehead AT heliosdev DOT org)
-	 * <p><code>com.heliosapm.tsdblite.metric.MetricCache.MetricJSONFunnel</code></p>
-	 */
-	public static enum MetricJSONFunnel implements Funnel<JsonNode> {
-	    /** The funnel instance */
-	    INSTANCE;
-			/**
-			 * {@inheritDoc}
-			 * @see com.google.common.hash.Funnel#funnel(java.lang.Object, com.google.common.hash.PrimitiveSink)
-			 */
-			@Override
-			public void funnel(final JsonNode metric, final PrimitiveSink into) {
-				try {
-					into.putString(metric.get("metric").textValue().trim(), UTF8);
-					final JsonNode tags = metric.get("tags");
-					if(tags!=null) {
-						for(final Iterator<String> keyIter = tags.fieldNames(); keyIter.hasNext();) {
-							final String key = keyIter.next();
-							into.putString(key.trim(), UTF8);
-							into.putString(tags.get(key).textValue().trim(), UTF8);
-						}
-					}
-				} catch (Exception ex) {
-					throw new RuntimeException("Failed to extract metricName/tags from JsonNode [" + metric + "]", ex);
-				}
-	    }
-	  }
 	
 	/**
 	 * Returns the long hash code for the passed metric JSON node
@@ -183,7 +147,18 @@ public class MetricCache implements MetricCacheMXBean {
 	 * @return the long hash code
 	 */
 	public static long hashCode(final JsonNode metricNode) {
-		return METRIC_NAME_HASHER.hashObject(metricNode, MetricJSONFunnel.INSTANCE).padToLong();
+		if(metricNode==null) throw new IllegalArgumentException("The passed node was null");
+		try {
+			final TreeMap<String, String> cleanedTags = new TreeMap<String, String>(ROOT_COLLATOR);
+			final JsonNode tags = metricNode.get("tags");
+			for(final Iterator<String> keyIter = tags.fieldNames(); keyIter.hasNext();) {
+				final String key = keyIter.next();
+				cleanedTags.put(key, tags.get(key).textValue());
+			}
+			return hashCode(metricNode.get("metric").textValue(), cleanedTags);
+		} catch (Exception ex) {
+			throw new RuntimeException("Failed to calc hash for metric node [" + metricNode + "]", ex);
+		}
 	}
 	
 	/**
@@ -192,8 +167,13 @@ public class MetricCache implements MetricCacheMXBean {
 	 * @param tags The tags. These will be correctly sorted by the hasher.
 	 * @return the long hash code
 	 */
-	public static long hashCode(final String metricName, final Map<String, String> tags) {
-		return METRIC_NAME_HASHER.hashObject(new NVP<String, Map<String, String>>(metricName, tags), MetricNVPFunnel.INSTANCE).padToLong();
+	public static long hashCode(final String metricName, final Map<String, String> tags) {		
+		return METRIC_HASHER.hashChars(
+			StringHelper.getStringBuilder()
+				.append(clean(tags))
+				.append(clean(metricName, "metric name")
+			)
+		);
 	}
 
 	/**
@@ -210,6 +190,49 @@ public class MetricCache implements MetricCacheMXBean {
 		}
 		return instance;
 	}
+	
+	/**
+	 * Validates and cleans the tag keys and values in the passed map, updating the cummulative byte count in the passed arr.
+	 * @param tags The tag map to clean
+	 * @return the cleaned map
+	 */
+	public static SortedMap<String, String> clean(final Map<String, String> tags) {
+		if(tags==null) throw new IllegalArgumentException("The passed tags map was empty");
+		final int size = tags.size();
+		if(size < MIN_TAGS) throw new IllegalArgumentException("The passed tags map had [" + size + "] tags, but the minimum is [" + MIN_TAGS + "]");
+		if(size > MAX_TAGS) throw new IllegalArgumentException("The passed tags map had [" + size + "] tags, but the maximum is [" + MAX_TAGS + "]");
+		final TreeMap<String, String> cleanedTags = new TreeMap<String, String>(ROOT_COLLATOR);
+		for(Map.Entry<String, String> entry: tags.entrySet()) {
+			clean(cleanedTags, entry.getKey(), entry.getValue());
+		}
+		return cleanedTags;
+	}
+	
+	private static void clean(final Map<String, String> putTarget, final String key, final String value) {
+		if(putTarget.put(clean(key, "Tag Key"), clean(value, "Tag Value"))!=null) {
+			throw new RuntimeException("Duplicate key during clean: key[" + key + "], cleanedKey:[" + clean(key, "Tag Key") + "]");
+		}
+	}
+	/**
+	 * Standard tag key, tag value and metric name string cleaner
+	 * @param s The string to clean
+	 * @param field The name of the field being cleaned for exception reporting
+	 * @return the cleaned string
+	 */
+	public static String clean(final String s, final String field) {
+		if(s==null || s.trim().isEmpty()) throw new IllegalArgumentException("The passed " + field + " was null or empty");
+		return s.trim().toLowerCase().replace(':', ';');
+	}	
+
+	/**
+	 * Standard tag key, tag value and metric name string cleaner
+	 * @param s The string to clean
+	 * @return the cleaned string
+	 */
+	public static String clean(final String s) {
+		return clean(s, "value");
+	}	
+	
 	
 	/**
 	 * Acquires the metric for the passed metric name and tags, creating and caching it if required
@@ -280,6 +303,7 @@ public class MetricCache implements MetricCacheMXBean {
 			@Override
 			public void run() {
 				while(true) {
+					final AtomicInteger expiredMetricCount = new AtomicInteger(0);
 					SystemClock.sleep(expiryPeriod);
 					final long startTime = System.currentTimeMillis();
 					final ObjectName[] metricObjectNames = JMXHelper.query(JMXHelper.ALL_MBEANS_FILTER, metricBeanQuery);					
@@ -291,27 +315,39 @@ public class MetricCache implements MetricCacheMXBean {
 								try {
 									final long now = System.currentTimeMillis();
 									final Map<String, Object> attrMap = JMXHelper.getAttributes(on, EXPIRY_ATTRIBUTES);
+									if(!attrMap.containsKey("LastActivity")) {
+										log.warn("No LA for [{}], AttrMap: {}", on, attrMap);
+										return;
+									}
 									final long lastActivity = (Long)attrMap.get("LastActivity");
 									final long age = now - lastActivity; 
 									if(age > expiry) {
+										expiredMetricCount.incrementAndGet();
 										metricMBeanServer.unregisterMBean(on);
 										expiredMetrics.increment();
 										final long hc = (Long)attrMap.get("MetricHashCode");
-										metricCache.remove(hc);
+										metricCache.remove(hc);										
 									}
-								} catch (Exception x) { /* No Op */ }
+								} catch (Exception x) { 
+									log.error("Expiry Task Failure", x);
+								}
 							}
 						}));
 					}
 					final long dispatchElapsed = System.currentTimeMillis() - startTime;
 					lastExpiryDispatchTime.set(dispatchElapsed);
-					log.debug("Expiry Dispatch for [{}] Metrics Completed in [{}] ms.", metricObjectNames.length, dispatchElapsed);
+					int fails = 0;
 					for(Future<?> f: taskFutures) {
-						try { f.get(); } catch (Exception x) {/* No Op */}
+						try { f.get(); } catch (Exception x) {fails++;}
 					}
 					final long expiryElapsed = System.currentTimeMillis() - startTime;
+					final int exp = expiredMetricCount.get();
+					if(exp != 0) {
+						log.info("Expiry Dispatch for [{}] Metrics Completed in [{}] ms. Expired [{}] metrics.", metricObjectNames.length, dispatchElapsed, exp);
+					}
+					
 					lastExpiryTime.set(expiryElapsed);
-					log.debug("Expiry Completed in [{}] ms.", expiryElapsed);
+					if(log.isDebugEnabled()) log.debug("Expiry Completed in [{}] ms. Tasks: {}, Fails: {}", expiryElapsed, taskFutures.size(), fails);
 				}
 			}
 		}, "MetricExpiryThread");
@@ -330,6 +366,7 @@ public class MetricCache implements MetricCacheMXBean {
 		if(trace!=null) {
 			final AppMetric appMetric = metricCache.get(trace.getHashCode());
 			appMetric.submit(trace);
+			log.info("Trace: {}", trace);
 //			final Map<String, String> p = metaPairs.get(appMetric.getMetricHashCode());
 //			if(p!=null) {
 //				log.info("AppMetric matched Meta: {}", p);

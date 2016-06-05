@@ -66,7 +66,7 @@ public class StringArrayTraceDecoder extends MessageToMessageDecoder<String[]> {
 	@Override
 	protected void decode(final ChannelHandlerContext ctx, final String[] msg, final List<Object> out) throws Exception {
 		final Trace t = parseTrace(msg);
-		log.info("Received Metric: [{}]", t);
+		log.debug("Received Metric: [{}]", t);
 		metricCache.submit(t);
 		out.add(t);		
 	}

@@ -48,7 +48,7 @@ public class TSDBLite {
 	public static void main(String[] args) {
 		log.info("TSDBLite booting....");	
 		ExtendedThreadManager.install();
-		InternalLoggerFactory .setDefaultFactory(new Slf4JLoggerFactory());		
+		InternalLoggerFactory .setDefaultFactory(Slf4JLoggerFactory.INSTANCE);		
 		final String jmxmpIface = ConfigurationHelper.getSystemThenEnvProperty(Constants.CONF_JMXMP_IFACE, Constants.DEFAULT_JMXMP_IFACE);
 		final int jmxmpPort = ConfigurationHelper.getIntSystemThenEnvProperty(Constants.CONF_JMXMP_PORT, Constants.DEFAULT_JMXMP_PORT);
 		JMXHelper.fireUpJMXMPServer(jmxmpIface, jmxmpPort, JMXHelper.getHeliosMBeanServer());

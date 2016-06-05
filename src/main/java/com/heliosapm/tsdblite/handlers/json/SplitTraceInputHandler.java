@@ -18,18 +18,11 @@ under the License.
  */
 package com.heliosapm.tsdblite.handlers.json;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.management.ObjectName;
 
@@ -42,6 +35,17 @@ import com.heliosapm.tsdblite.json.JSON;
 import com.heliosapm.tsdblite.metric.MetricCache;
 import com.heliosapm.tsdblite.metric.Trace;
 import com.heliosapm.utils.jmx.JMXHelper;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
+
+import static io.netty.handler.codec.http.HttpVersion.*;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpUtil;
 
 /**
  * <p>Title: SplitTraceInputHandler</p>
@@ -95,6 +99,12 @@ public class SplitTraceInputHandler extends SimpleChannelInboundHandler<ByteBuf>
 //				metricCache.submit(on, metaNvps.get("Name"), metaNvps.get("Value"));
 //			}
 		}
+		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.NO_CONTENT);
+		ctx.writeAndFlush(response);
+		
+		 
+				 //HTTP_1_1, status, Unpooled.copiedBuffer("Failure: " + status + "\r\n", CharsetUtil.UTF_8));
+				   // response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8");       		
 	}
 	
 	protected ObjectName metaObjectName(final JsonNode node) {
